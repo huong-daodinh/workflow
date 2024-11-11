@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "react",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["resources/js/*"],
+      "ziggy-js": ["./vendor/tightenco/ziggy"]
+    },
+    "noImplicitAny": false,
+    "allowJs": true,
+    "types": ["@intlify/vite-plugin-vue-i18n/client"]
+  },
+  "include": ["resources/**/*.ts", "resources/**/*.d.ts", "resources/**/*.vue"],
+  "exclude": ["node_modules", "public"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}

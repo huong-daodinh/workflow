@@ -1,0 +1,44 @@
++ config SIDEBAR
++ migration -- not important
++ create project index, create, update, task list(fake data), team index,
+
+
+==== essay
++ database design
++ use case
+
+project
++ create : done
++ sidebar: project ca nhan va nhom - abort
++ project detail:
++ project create with team
++ sua lai project tu sidebar => index: grid view + create button: done
+
+project conversation
+
+task
+
+team: grid view
+ - index: my team + team Im in
+
+
+phan quyen
+timesheet
+chat
+request
+project
+task
+thong bao: nhac ten, nhac trang thai cong viec cho ng theo doi, trang thai de xuat
+
+7-11-24
+ - sua lai giao dien project detail de responsive
+ - task attachment
+ - task followers
+ - drag and drop tasks
+ - mention: done fe
+ - update task results
+ - mark completed -> send mail to followers -> show close task button -> if not satisfied -> mark doing
+ - project sub_detail
+ - project detail list view, board view
+
+

@@ -1,0 +1,46 @@
+import mysql.connector
+import pandas as pd
+
+# Kết nối tới cơ sở dữ liệu
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='',
+    database='management'
+)
+
+# Tạo cursor để thực hiện truy vấn
+cursor = conn.cursor()
+
+# Truy vấn lấy thông tin về các bảng và cột, bao gồm cả comment
+query = """
+    SELECT 
+        TABLE_NAME, 
+        COLUMN_NAME, 
+        COLUMN_TYPE, 
+        COLUMN_COMMENT
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_SCHEMA = 'management'
+"""
+
+cursor.execute(query)
+columns = cursor.fetchall()
+
+# Đóng kết nối
+cursor.close()
+conn.close()
+
+# Tạo DataFrame với thứ tự cột mong muốn
+column_names = [
+    'TABLE_NAME', 
+    'COLUMN_NAME', 
+    'COLUMN_TYPE', 
+    'COLUMN_COMMENT'
+]
+
+df = pd.DataFrame(columns, columns=column_names)
+
+# Xuất dữ liệu ra file Excel và đảm bảo thứ tự cột
+df.to_excel('database_design.xlsx', index=False, engine='openpyxl')
+
+print("Export thành công!")

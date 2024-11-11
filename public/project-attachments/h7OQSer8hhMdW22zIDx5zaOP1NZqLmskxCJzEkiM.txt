@@ -1,0 +1,163 @@
+DROP DATABASE IF EXISTS management;
+CREATE DATABASE IF NOT EXISTS management; 
+USE management;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    NAME VARCHAR(255) NOT NULL COMMENT 'Họ tên',
+    dob DATETIME COMMENT 'Ngày sinh',
+    address VARCHAR(255) COMMENT 'Địa chỉ nơi ở',
+    phone VARCHAR(20) COMMENT 'Điện thoại',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id)
+); 
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    email VARCHAR(255) NOT NULL COMMENT 'Địa chỉ email người dùng để đăng nhập',
+    password VARCHAR(255) NOT NULL COMMENT 'Mật khẩu',
+    user_id INT NOT NULL COMMENT 'Mã định danh người dùng',
+    avatar VARCHAR(255) COMMENT 'Ảnh đại diện',
+    role BIT(1) COMMENT 'Vai trò tài khoản: Admin, Leader, Member, Customer',
+    superior_id INT COMMENT 'Mã định danh Tài khoản cấp trên',
+    status INT(1) COMMENT 'Trạng thái của tài khoản',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    verification_code VARCHAR(64) COMMENT 'Mã xác thực: đổi mk, xác minh email',
+    email_verified_at BIT(1) COMMENT 'Xác thực email chưa?',
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (superior_id) REFERENCES accounts(id)
+); 
+
+CREATE TABLE IF NOT EXISTS projects (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    name VARCHAR(255) NOT NULL COMMENT 'Tên dự án',
+    description TEXT COMMENT 'Mô tả dự án',
+    created_by INT NOT NULL COMMENT 'Tài khoản tạo',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (created_by) REFERENCES accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    subject VARCHAR(255) NOT NULL COMMENT 'Tiêu đề công việc',
+    description TEXT COMMENT 'Mô tả task',
+    project_id INT NOT NULL COMMENT 'Mã dự án',
+    assigner_id INT NOT NULL COMMENT 'Tài khoản bàn giao',
+    assignee_id INT NOT NULL COMMENT 'Tài khoản được bàn giao',
+    status INT(1) COMMENT 'pending, open, in-progress, ready-to-test, test-done, reviewed, closed',
+    type INT(1) COMMENT 'task, bug, feedback',
+    estimate_hour INT(2) COMMENT 'Dự kiến hoàn thành task',
+    actual_hour INT(2) COMMENT 'Thực tế hoàn thành task',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (project_id) REFERENCES projects(id),
+    FOREIGN KEY (assigner_id) REFERENCES accounts(id),
+    FOREIGN KEY (assignee_id) REFERENCES accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS attachments (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    type INT(1) COMMENT 'Kiểu: video, image, file',
+    task_id INT NOT NULL COMMENT 'Mã dự án có đính kèm',
+    file_name VARCHAR(255) NOT NULL COMMENT 'Đường dẫn thư mục',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (task_id) REFERENCES tasks(id)
+) COMMENT = 'Đính kèm mô tả task';
+
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    created_by INT NOT NULL COMMENT 'Mã Tài khoản tạo',
+    title TEXT NOT NULL COMMENT 'Tiêu đề thông báo',
+    description TEXT COMMENT 'Mô tả thông báo',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (created_by) REFERENCES accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS notification_to_user (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    account_id INT NOT NULL COMMENT 'Mã định danh Tài khoản nhận thông báo',
+    notification_id INT NOT NULL COMMENT 'Mã định danh thông báo',
+    PRIMARY KEY (id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id),
+    FOREIGN KEY (notification_id) REFERENCES notifications(id)
+);
+
+CREATE TABLE IF NOT EXISTS timesheets (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    account_id INT NOT NULL COMMENT 'Mã định danh Tài khoản thực hiện chấm công',
+    date DATE NOT NULL COMMENT 'Ngày thực hiện chấm công',
+    checkin_time TIME COMMENT 'Thời gian checkin',
+    checkout_time TIME COMMENT 'Thời gian checkout',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+) COMMENT = 'Bảng chấm công';
+
+CREATE TABLE IF NOT EXISTS permissions (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    name VARCHAR(255) NOT NULL COMMENT 'Tên quyền',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id)
+) COMMENT = 'Bảng phân quyền';
+
+CREATE TABLE IF NOT EXISTS permission_account (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    account_id INT NOT NULL COMMENT 'Mã định danh tài khoản',
+    permission_id INT NOT NULL COMMENT 'Mã định danh quyền',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(id)
+);
+
+CREATE TABLE IF NOT EXISTS chats (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    chat_name VARCHAR(255) NOT NULL COMMENT 'Tên nhóm chat',
+    avatar VARCHAR(255) COMMENT 'Ảnh đại diện nhóm',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tạo bản ghi',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời gian cập nhật bản ghi',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_member (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    chat_id INT NOT NULL COMMENT 'Mã định danh nhóm chat',
+    account_id INT NOT NULL COMMENT 'Mã định danh tài khoản',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian tài khoản tham gia nhóm chat',
+    PRIMARY KEY (id),
+    FOREIGN KEY (chat_id) REFERENCES chats(id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT COMMENT 'Mã định danh',
+    chat_id INT NOT NULL COMMENT 'Mã định danh nhóm chat',
+    account_id INT NOT NULL COMMENT 'Mã định danh tài khoản',
+    message_text TEXT COMMENT 'Nội dung tin nhắn',
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Thời gian gửi tin nhắn',
+    deleted_at TIMESTAMP DEFAULT NULL COMMENT 'Thời gian xoá bản ghi',
+    PRIMARY KEY (id),
+    FOREIGN KEY (chat_id) REFERENCES chats(id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
