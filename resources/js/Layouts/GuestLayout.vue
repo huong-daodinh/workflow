@@ -65,6 +65,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useAppStore } from '@/stores/index';
+import { usePage } from '@inertiajs/vue3';
+const page = usePage();
 const store = useAppStore();
 const showTopButton = ref(false);
 onMounted(() => {
@@ -75,7 +77,7 @@ onMounted(() => {
       showTopButton.value = false;
     }
   };
-
+  store.toggleLocale(page.props.current_locale);
   store.toggleMainLoader();
 });
 

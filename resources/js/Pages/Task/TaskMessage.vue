@@ -1,6 +1,8 @@
 <template>
   <div>
-    <label for="" class="uppercase text-dark text-lg">Binh luan ({{ messages.length }})</label>
+    <label for="" class="uppercase text-dark text-lg"
+      >{{ $t('comments') }} ({{ messages.length }})</label
+    >
     <div v-if="messages.length > 0" class="max-h-[calc(50vh-80px)] overflow-y-auto mb-5 chat-box">
       <div class="flex mb-5 relative" v-for="(message, index) in messages" :key="index">
         <!-- loading -->
@@ -23,19 +25,19 @@
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
                 <icon-message-dots />
-                Reply
+                {{ $t('response') }}
               </a>
             </li>
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
                 <icon-edit />
-                Edit
+                {{ $t('reply') }}
               </a>
             </li>
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
                 <icon-trash />
-                Delete
+                {{ $t('delete') }}
               </a>
             </li>
           </ul>
@@ -83,10 +85,10 @@
 </template>
 
 <script lang="ts" setup>
-import IconSend from '../icon/icon-send.vue';
-import IconMessageDots from '../icon/icon-message-dots.vue';
-import IconEdit from '../icon/icon-edit.vue';
-import IconTrash from '../icon/icon-trash.vue';
+import IconSend from '@/Components/icon/icon-send.vue';
+import IconMessageDots from '@/Components/icon/icon-message-dots.vue';
+import IconEdit from '@/Components/icon/icon-edit.vue';
+import IconTrash from '@/Components/icon/icon-trash.vue';
 import { defineProps, onMounted, ref, defineEmits } from 'vue';
 import type { task_message } from '@/interfaces/index.interfaces';
 import { getTaskMessages } from '@/services/task.service';

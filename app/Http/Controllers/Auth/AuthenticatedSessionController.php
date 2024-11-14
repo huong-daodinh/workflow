@@ -34,6 +34,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // return redirect()->intended(app()->getLocale() . RouteServiceProvider::HOME);
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
@@ -48,6 +49,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
+        // return redirect(app()->getLocale() . '/');
         return redirect('/');
     }
 }

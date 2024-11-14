@@ -15,10 +15,10 @@
             {{ page.props.auth.user.name.charAt(0) + page.props.auth.user.name.charAt(1) }}
           </span>
           <div>
-            <h5 class="text-[#3b3f5c] text-xl font-semibold dark:text-white-light">
+            <h5 class="text-[#3b3f5c] lg:text-xl text-sm font-semibold dark:text-white-light">
               {{ page.props.auth.user.name }}
             </h5>
-            <p class="text-white-dark">
+            <p class="text-white-dark lg:text-base text-xs">
               {{ page.props.auth.user.role }}
             </p>
           </div>
@@ -42,10 +42,10 @@
             {{ page.props.auth.user.name.charAt(0) + page.props.auth.user.name.charAt(1) }}
           </span>
           <div>
-            <h5 class="text-[#3b3f5c] text-xl font-semibold dark:text-white-light">
+            <h5 class="text-[#3b3f5c] lg:text-xl text-sm font-semibold dark:text-white-light">
               {{ page.props.auth.user.name }}
             </h5>
-            <p class="text-white-dark">
+            <p class="text-white-dark lg:text-base text-xs">
               {{ page.props.auth.user.role }}
             </p>
           </div>

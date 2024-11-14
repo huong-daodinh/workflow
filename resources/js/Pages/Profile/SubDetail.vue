@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="w-[19rem] w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded-md border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+  <div class="w-full bg-white rounded-md dark:bg-[#191e3a] dark:shadow-none">
     <div class="py-7 px-6">
       <div class="flex gap-x-5">
         <img

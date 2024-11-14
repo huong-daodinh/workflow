@@ -9,9 +9,9 @@
               src="/assets/favicon_io/apple-touch-icon.png"
               alt="" />
             <span
-              class="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle hidden md:inline dark:text-white-light transition-all duration-300"
-              >WORKFLOW</span
-            >
+              class="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle hidden md:inline dark:text-white-light transition-all duration-300">
+              WORKFLOW
+            </span>
           </a>
 
           <a
@@ -77,7 +77,7 @@
                   <template v-for="item in store.languageList" :key="item.code">
                     <li>
                       <button
-                        type="button"
+                        as="button"
                         class="w-full hover:text-primary"
                         :class="{ 'bg-primary/10 text-primary': i18n.locale === item.code }"
                         @click="changeLanguage(item), close()">
@@ -140,9 +140,9 @@
                       <div
                         class="flex items-center py-4 px-5 text-primary font-semibold group dark:text-gray-400 justify-center cursor-pointer"
                         @click="close()">
-                        <span class="group-hover:underline ltr:mr-1 rtl:ml-1"
-                          >VIEW ALL ACTIVITIES</span
-                        >
+                        <span class="group-hover:underline ltr:mr-1 rtl:ml-1">
+                          VIEW ALL ACTIVITIES
+                        </span>
 
                         <icon-arrow-left
                           class="group-hover:translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1" />
@@ -255,9 +255,9 @@
               class="!block">
               <button type="button" class="relative group block">
                 <span
-                  class="flex justify-center items-center w-9 h-9 text-center rounded-full object-cover bg-info text-base"
-                  >AG</span
-                >
+                  class="flex justify-center items-center w-9 h-9 text-center rounded-full object-cover bg-info text-base">
+                  AG
+                </span>
               </button>
               <template #content="{ close }">
                 <ul
@@ -266,9 +266,9 @@
                     <div class="flex items-center px-4 py-4">
                       <div class="flex-none">
                         <span
-                          class="flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-danger text-base"
-                          >AG</span
-                        >
+                          class="flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-danger text-base">
+                          AG
+                        </span>
                       </div>
                       <div class="ltr:pl-4 rtl:pr-4 truncate">
                         <h4 class="text-base">{{ $page.props.auth.user.name }}</h4>
@@ -306,516 +306,6 @@
           </div>
         </div>
       </div>
-
-      <!-- horizontal menu -->
-      <ul
-        class="horizontal-menu hidden py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-[#0e1726] text-black dark:text-white-dark">
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-dashboard class="shrink-0" />
-
-              <span class="px-2">{{ $t('dashboard') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/">{{ $t('sales') }}</a>
-            </li>
-            <li>
-              <a to="/analytics">{{ $t('analytics') }}</a>
-            </li>
-            <li>
-              <a to="/finance">{{ $t('finance') }}</a>
-            </li>
-            <li>
-              <a to="/crypto">{{ $t('crypto') }}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-apps class="shrink-0" />
-
-              <span class="px-2">{{ $t('apps') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/apps/chat">{{ $t('chat') }}</a>
-            </li>
-            <li>
-              <a to="/apps/mailbox">{{ $t('mailbox') }}</a>
-            </li>
-            <li>
-              <a to="/apps/todolist">{{ $t('todo_list') }}</a>
-            </li>
-            <li>
-              <a to="/apps/notes">{{ $t('notes') }}</a>
-            </li>
-            <li>
-              <a to="/apps/scrumboard">{{ $t('scrumboard') }}</a>
-            </li>
-            <li>
-              <a to="/apps/contacts">{{ $t('contacts') }}</a>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('invoice') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/apps/invoice/list">{{ $t('list') }}</a>
-                </li>
-                <li>
-                  <a to="/apps/invoice/preview">{{ $t('preview') }}</a>
-                </li>
-                <li>
-                  <a to="/apps/invoice/add">{{ $t('add') }}</a>
-                </li>
-                <li>
-                  <a to="/apps/invoice/edit">{{ $t('edit') }}</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a to="/apps/calendar">{{ $t('calendar') }}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-components class="shrink-0" />
-              <span class="px-2">{{ $t('components') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/components/tabs">{{ $t('tabs') }}</a>
-            </li>
-            <li>
-              <a to="/components/accordions">{{ $t('accordions') }}</a>
-            </li>
-            <li>
-              <a to="/components/modals">{{ $t('modals') }}</a>
-            </li>
-            <li>
-              <a to="/components/cards">{{ $t('cards') }}</a>
-            </li>
-            <li>
-              <a to="/components/carousel">{{ $t('carousel') }}</a>
-            </li>
-            <li>
-              <a to="/components/countdown">{{ $t('countdown') }}</a>
-            </li>
-            <li>
-              <a to="/components/counter">{{ $t('counter') }}</a>
-            </li>
-            <li>
-              <a to="/components/sweetalert">{{ $t('sweet_alerts') }}</a>
-            </li>
-            <li>
-              <a to="/components/timeline">{{ $t('timeline') }}</a>
-            </li>
-            <li>
-              <a to="/components/notifications">{{ $t('notifications') }}</a>
-            </li>
-            <li>
-              <a to="/components/media-object">{{ $t('media_object') }}</a>
-            </li>
-            <li>
-              <a to="/components/list-group">{{ $t('list_group') }}</a>
-            </li>
-            <li>
-              <a to="/components/pricing-table">{{ $t('pricing_tables') }}</a>
-            </li>
-            <li>
-              <a to="/components/lightbox">{{ $t('lightbox') }}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-elements class="shrink-0" />
-              <span class="px-2">{{ $t('elements') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/elements/alerts">{{ $t('alerts') }}</a>
-            </li>
-            <li>
-              <a to="/elements/avatar">{{ $t('avatar') }}</a>
-            </li>
-            <li>
-              <a to="/elements/badges">{{ $t('badges') }}</a>
-            </li>
-            <li>
-              <a to="/elements/breadcrumbs">{{ $t('breadcrumbs') }}</a>
-            </li>
-            <li>
-              <a to="/elements/buttons">{{ $t('buttons') }}</a>
-            </li>
-            <li>
-              <a to="/elements/buttons-group">{{ $t('button_groups') }}</a>
-            </li>
-            <li>
-              <a to="/elements/color-library">{{ $t('color_library') }}</a>
-            </li>
-            <li>
-              <a to="/elements/dropdown">{{ $t('dropdown') }}</a>
-            </li>
-            <li>
-              <a to="/elements/infobox">{{ $t('infobox') }}</a>
-            </li>
-            <li>
-              <a to="/elements/jumbotron">{{ $t('jumbotron') }}</a>
-            </li>
-            <li>
-              <a to="/elements/loader">{{ $t('loader') }}</a>
-            </li>
-            <li>
-              <a to="/elements/pagination">{{ $t('pagination') }}</a>
-            </li>
-            <li>
-              <a to="/elements/popovers">{{ $t('popovers') }}</a>
-            </li>
-            <li>
-              <a to="/elements/progress-bar">{{ $t('progress_bar') }}</a>
-            </li>
-            <li>
-              <a to="/elements/search">{{ $t('search') }}</a>
-            </li>
-            <li>
-              <a to="/elements/tooltips">{{ $t('tooltips') }}</a>
-            </li>
-            <li>
-              <a to="/elements/treeview">{{ $t('treeview') }}</a>
-            </li>
-            <li>
-              <a to="/elements/typography">{{ $t('typography') }}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-datatables class="shrink-0" />
-              <span class="px-2">{{ $t('tables') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/tables">{{ $t('tables') }}</a>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('datatables') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/datatables/basic">{{ $t('basic') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/advanced">{{ $t('advanced') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/skin">{{ $t('skin') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/order-sorting">{{ $t('order_sorting') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/columns-filter">{{ $t('columns_filter') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/multi-column">{{ $t('multi_column') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/multiple-tables">{{ $t('multiple_tables') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/alt-pagination">{{ $t('alt_pagination') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/checkbox">{{ $t('checkbox') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/range-search">{{ $t('range_search') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/export">{{ $t('export') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/sticky-header">{{ $t('sticky_header') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/clone-header">{{ $t('clone_header') }}</a>
-                </li>
-                <li>
-                  <a to="/datatables/column-chooser">{{ $t('column_chooser') }}</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-forms class="shrink-0" />
-              <span class="px-2">{{ $t('forms') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/forms/basic">{{ $t('basic') }}</a>
-            </li>
-            <li>
-              <a to="/forms/input-group">{{ $t('input_group') }}</a>
-            </li>
-            <li>
-              <a to="/forms/layouts">{{ $t('layouts') }}</a>
-            </li>
-            <li>
-              <a to="/forms/validation">{{ $t('validation') }}</a>
-            </li>
-            <li>
-              <a to="/forms/input-mask">{{ $t('input_mask') }}</a>
-            </li>
-            <li>
-              <a to="/forms/select2">{{ $t('select2') }}</a>
-            </li>
-            <li>
-              <a to="/forms/touchspin">{{ $t('touchspin') }}</a>
-            </li>
-            <li>
-              <a to="/forms/checkbox-radio">{{ $t('checkbox_and_radio') }}</a>
-            </li>
-            <li>
-              <a to="/forms/switches">{{ $t('switches') }}</a>
-            </li>
-            <li>
-              <a to="/forms/wizards">{{ $t('wizards') }}</a>
-            </li>
-            <li>
-              <a to="/forms/file-upload">{{ $t('file_upload') }}</a>
-            </li>
-            <li>
-              <a to="/forms/quill-editor">{{ $t('quill_editor') }}</a>
-            </li>
-            <li>
-              <a to="/forms/markdown-editor">{{ $t('markdown_editor') }}</a>
-            </li>
-            <li>
-              <a to="/forms/date-picker">{{ $t('date_and_range_picker') }}</a>
-            </li>
-            <li>
-              <a to="/forms/clipboard">{{ $t('clipboard') }}</a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-pages class="shrink-0" />
-              <span class="px-2">{{ $t('pages') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('users') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/users/profile">{{ $t('profile') }}</a>
-                </li>
-                <li>
-                  <a to="/users/user-account-settings">{{ $t('account_settings') }}</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a to="/pages/knowledge-base">{{ $t('knowledge_base') }}</a>
-            </li>
-            <li>
-              <a to="/pages/contact-us-boxed" target="_blank">{{ $t('contact_us_boxed') }}</a>
-            </li>
-            <li>
-              <a to="/pages/contact-us-cover" target="_blank">{{ $t('contact_us_cover') }}</a>
-            </li>
-            <li>
-              <a to="/pages/faq">FAQ</a>
-            </li>
-            <li>
-              <a to="/pages/coming-soon-boxed" target="_blank">{{ $t('coming_soon_boxed') }}</a>
-            </li>
-            <li>
-              <a to="/pages/coming-soon-cover" target="_blank">{{ $t('coming_soon_cover') }}</a>
-            </li>
-            <li>
-              <a to="/pages/maintenence" target="_blank">{{ $t('maintenence') }}</a>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('error') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/pages/error404" target="_blank">{{ $t('404') }}</a>
-                </li>
-                <li>
-                  <a to="/pages/error500" target="_blank">{{ $t('500') }}</a>
-                </li>
-                <li>
-                  <a to="/pages/error503" target="_blank">{{ $t('503') }}</a>
-                </li>
-              </ul>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('login') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/auth/cover-login" target="_blank">{{ $t('login_cover') }}</a>
-                </li>
-                <li>
-                  <a to="/auth/boxed-signin" target="_blank">{{ $t('login_boxed') }}</a>
-                </li>
-              </ul>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('register') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/auth/cover-register" target="_blank">{{ $t('register_cover') }}</a>
-                </li>
-                <li>
-                  <a to="/auth/boxed-signup" target="_blank">{{ $t('register_boxed') }}</a>
-                </li>
-              </ul>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('password_recovery') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/auth/cover-password-reset" target="_blank">{{
-                    $t('recover_id_cover')
-                  }}</a>
-                </li>
-                <li>
-                  <a to="/auth/boxed-password-reset" target="_blank">{{
-                    $t('recover_id_boxed')
-                  }}</a>
-                </li>
-              </ul>
-            </li>
-            <li class="relative">
-              <a href="javascript:;"
-                >{{ $t('lockscreen') }}
-                <div class="ltr:ml-auto rtl:mr-auto rtl:rotate-90 -rotate-90">
-                  <icon-caret-down />
-                </div>
-              </a>
-              <ul
-                class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
-                <li>
-                  <a to="/auth/cover-lockscreen" target="_blank">{{ $t('unlock_cover') }}</a>
-                </li>
-                <li>
-                  <a to="/auth/boxed-lockscreen" target="_blank">{{ $t('unlock_boxed') }}</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li class="menu nav-item relative">
-          <a href="javascript:;" class="nav-link">
-            <div class="flex items-center">
-              <icon-menu-more class="shrink-0" />
-
-              <span class="px-2">{{ $t('more') }}</span>
-            </div>
-            <div class="right_arrow">
-              <icon-caret-down />
-            </div>
-          </a>
-          <ul class="sub-menu">
-            <li>
-              <a to="/dragndrop">{{ $t('drag_and_drop') }}</a>
-            </li>
-            <li>
-              <a to="/charts">{{ $t('charts') }}</a>
-            </li>
-            <li>
-              <a to="/font-icons">{{ $t('font_icons') }}</a>
-            </li>
-            <li>
-              <a to="/widgets">{{ $t('widgets') }}</a>
-            </li>
-            <li>
-              <a href="https://vristo.sbthemes.com" target="_blank">{{ $t('documentation') }}</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
     </div>
   </header>
 </template>
@@ -838,20 +328,10 @@ import IconInfoCircle from '@/Components/icon/icon-info-circle.vue';
 import IconBellBing from '@/Components/icon/icon-bell-bing.vue';
 import IconUser from '@/Components/icon/icon-user.vue';
 import IconLogout from '@/Components/icon/icon-logout.vue';
-import IconMenuDashboard from '@/Components/icon/menu/icon-menu-dashboard.vue';
-import IconCaretDown from '@/Components/icon/icon-caret-down.vue';
-import IconMenuApps from '@/Components/icon/menu/icon-menu-apps.vue';
-import IconMenuComponents from '@/Components/icon/menu/icon-menu-components.vue';
-import IconMenuElements from '@/Components/icon/menu/icon-menu-elements.vue';
-import IconMenuDatatables from '@/Components/icon/menu/icon-menu-datatables.vue';
-import IconMenuForms from '@/Components/icon/menu/icon-menu-forms.vue';
-import IconMenuPages from '@/Components/icon/menu/icon-menu-pages.vue';
-import IconMenuMore from '@/Components/icon/menu/icon-menu-more.vue';
 import { Link } from '@inertiajs/vue3';
 
 const store = useAppStore();
 const search = ref(false);
-
 // multi language
 const i18n = reactive(useI18n());
 const changeLanguage = (item: any) => {

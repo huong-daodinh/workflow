@@ -17,7 +17,7 @@ export const useAppStore = defineStore('app', {
     sidebar: false,
     languageList: [
       { code: 'en', name: 'English' },
-      { code: 'vn', name: 'Vietnamese' }
+      { code: 'vn', name: 'Tiếng Việt' }
     ],
     projectViewStyleList: ['list', 'board'],
     isShowMainLoader: true,

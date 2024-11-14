@@ -23,6 +23,12 @@ export interface tag {
   color: string;
 }
 
+export interface attachment {
+  id: number;
+  slug: string;
+  url: string;
+}
+
 export interface task {
   id: number;
   title: string;
@@ -35,6 +41,9 @@ export interface task {
   created_by: user;
   created_at: string;
   updated_at: string;
+  started_at: string;
+  result: string;
+  attachments: attachment[];
   sub_tasks: subTask[];
   tags: tag[];
 }
@@ -58,6 +67,7 @@ export interface task_list {
   id: number;
   name: string;
   tasks: task[];
+  project: project;
 }
 
 export interface project {
@@ -75,4 +85,9 @@ export interface task_message {
   id?: number;
   content: string;
   sent_by: user;
+}
+
+export interface task_result {
+  task: task;
+  description: string;
 }

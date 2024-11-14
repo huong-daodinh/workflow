@@ -85,6 +85,12 @@
               <icon-menu />
             </button>
           </div>
+          <!-- <template v-if="!projects.length">
+            <div
+              class="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
+              No data available
+            </div>
+          </template> -->
           <template v-if="!filteredNotesList.length">
             <div
               class="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">

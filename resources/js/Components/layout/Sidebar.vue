@@ -89,7 +89,7 @@
                   <IconCircleCheck fill="true" class="group-hover:!text-primary shrink-0" />
                   <span
                     class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                    Chấm công
+                    {{ $t('timesheet') }}
                   </span>
                 </div>
               </Link>
@@ -150,6 +150,7 @@ import IconCircleCheck from '../icon/icon-circle-check.vue';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { showMessage } from '@/functions/alert';
+import i18n from '@/i18n';
 
 const page = usePage();
 const store = useAppStore();
@@ -191,6 +192,7 @@ watch(
   () => page.props.flash,
   () => {
     showMessage(page.props.flash.message, page.props.flash.type);
+    console.log(page.props.flash);
   }
 );
 </script>

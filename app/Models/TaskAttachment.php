@@ -9,4 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TaskAttachment extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $table = 'task_attachments';
+    protected $fillable = ['url', 'slug', 'task_id'];
 }

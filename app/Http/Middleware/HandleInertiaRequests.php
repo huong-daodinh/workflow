@@ -39,6 +39,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash'=> fn () => $request->session()->get('flash'),
             'flash_data'=> fn () => $request->session()->get('flash_data'),
+            'current_route_name' => fn () => \Illuminate\Support\Facades\Route::currentRouteName(),
+            'current_locale' => fn () => app()->getLocale(),
         ];
     }
 }

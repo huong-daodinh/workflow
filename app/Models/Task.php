@@ -14,6 +14,7 @@ class Task extends Model
       'priority',
       'description',
       'status',
+      'result',
       'task_list_id',
       'created_by',
       'assigner_id',
@@ -32,7 +33,7 @@ class Task extends Model
       return $this->hasMany(TaskMessage::class, 'task_id');
     }
 
-    public function sub_tasks() {
+    public function subtasks() {
       return $this->hasMany(SubTask::class, 'task_id');
     }
 
@@ -45,6 +46,11 @@ class Task extends Model
     }
 
     public function tags() {
-      return $this->hasManyThrough(Tag::class, TaskTag::class, 'task_id', 'id', 'id', 'tag_id');
+      // return $this->hasManyThrough(Tag::class, TaskTag::class, 'task_id', 'id', 'id', 'tag_id');
+      return $this->belongsToMany(Tag::class, 'tasks_tags', 'task_id', 'tag_id');
+    }
+
+    public function attachments() {
+      return $this->hasMany(TaskAttachment::class, 'task_id');
     }
 }

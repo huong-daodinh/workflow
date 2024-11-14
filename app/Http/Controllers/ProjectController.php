@@ -61,17 +61,19 @@ class ProjectController extends Controller
     public function show($id)
     {
         $project = Project::findOrFail($id);
-        $project->load(['createdBy', 'attachments', 'task_lists']);
-        foreach($project->task_lists as $taskList) {
-            $taskList->load('tasks.tags');
-            foreach($taskList->tasks as $task) {
-                $task->load(['sub_tasks', 'assignee']);
-                foreach($task->sub_tasks as $subTask) {
-                    $subTask->load(['assignee', 'tags']);
-                }
-            }
-        }
-
+        $project->load(
+          [
+            'createdBy',
+            'attachments',
+            'taskLists.project',
+            'taskLists.tasks',
+            'taskLists.tasks.subTasks',
+            'taskLists.tasks.subTasks.assignee',
+            'taskLists.tasks.subTasks.tags',
+            'taskLists.tasks.assignee',
+            'taskLists.tasks.tags'
+          ]
+        );
         return Inertia::render('Project/ProjectDetail', [
             'project' => $project
         ]);

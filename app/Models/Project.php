@@ -42,7 +42,7 @@ class Project extends Model
         return $this->projectConversations()->count();
     }
 
-    public function task_lists() {
+    public function taskLists() {
         return $this->hasMany(TaskList::class);
     }
 }

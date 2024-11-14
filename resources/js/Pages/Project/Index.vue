@@ -90,7 +90,7 @@
           </div>
           <template v-if="!projects.length">
             <div
-              class="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
+              class="flex justify-center items-center sm:min-h-[500px] min-h-[600px] font-semibold text-lg h-full">
               No data available
             </div>
           </template>
@@ -104,45 +104,16 @@
                       'bg-primary-light shadow-primary': project.type === 'P',
                       'bg-warning-light shadow-warning': project.type === 'T'
                     }">
-                    <div class="max-h-[142px]">
+                    <div class="h-[142px]">
                       <div class="flex justify-between">
                         <div class="flex items-center w-max">
-                          <div class="flex-none">
-                            <!-- <div
-                              v-if="project.thumb"
-                              class="p-0.5 bg-gray-300 dark:bg-gray-700 rounded-full">
-                              <img
-                                class="h-8 w-8 rounded-full object-cover"
-                                :src="`/assets/images/${project.thumb}`" />
-                            </div> -->
-                            <!-- avatar of creator -->
-                            <!-- <div
-                              v-if="!project.thumb && project.user"
-                              class="grid place-content-center h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-700 text-sm font-semibold">
-                              {{
-                                project.user.charAt(0) +
-                                '' +
-                                project.user.charAt(project.user.indexOf('') + 1)
-                              }}
-                            </div> -->
-                            <!-- <div
-                              v-if="!project.thumb && !project.user"
-                              class="bg-gray-300 dark:bg-gray-700 rounded-full grid place-content-center h-8 w-8">
-                              <icon-user class="w-4.5 h-4.5" />
-                            </div> -->
-                          </div>
-                          <div class="ltr:ml-2 rtl:mr-2">
-                            <!-- <div class="font-semibold">{{ project.user }}</div> -->
-                            <!-- <div class="text-sx text-white-dark">{{ project.date }}</div> -->
-                          </div>
+                          <div class="flex-none"></div>
                         </div>
                       </div>
                       <div>
-                        <Link :href="route('project.show', { id: project.id })">
-                          <h4 class="font-semibold mt-4">{{ project.title }}</h4>
-                          <p
-                            class="text-white-dark mt-2 h-12 overflow-hidden"
-                            v-html="project.description" />
+                        <Link
+                          :href="route('project.show', { id: project.id, locale: store.locale })">
+                          <h4 class="font-semibold mt-4 overflow-hidden">{{ project.title }}</h4>
                         </Link>
                       </div>
                     </div>
@@ -200,7 +171,7 @@
                       <button
                         type="button"
                         class="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                        @click="isAddProjectModal = false">
+                        @click="clearForm">
                         <icon-x />
                       </button>
                       <div
@@ -229,13 +200,13 @@
                                   <select
                                     class="form-select form-select-lg text-white-dark"
                                     v-model="form.type">
-                                    <option value="individual-work">Individual</option>
-                                    <option value="team-work">Team</option>
+                                    <option value="P">Individual</option>
+                                    <option value="T">Team</option>
                                   </select>
                                 </div>
                                 <input-error :message="form.errors.type" />
                               </div>
-                              <div v-if="form.type === 'team-work'">
+                              <div v-if="form.type === 'T'">
                                 <div>
                                   <label for="title">Select team</label>
                                   <select
@@ -293,15 +264,15 @@
                                     v-for="(file, index) in uploadedFiles"
                                     :key="index"
                                     class="flex justify-between mt-2 border-b-2 p-1">
-                                    <span
-                                      class="text-sm italic block h-fit underline text-primary"
-                                      >{{ file.name }}</span
-                                    >
+                                    <span class="text-sm italic block h-fit underline text-primary">
+                                      <file-icon :extension="file.name.split('.').pop()" />
+                                      {{ file.name }}
+                                    </span>
                                     <span
                                       class="text-sm p-1 cursor-pointer hover:text-primary block"
-                                      @click="removeAttachment(file.id)"
-                                      >x</span
-                                    >
+                                      @click="removeAttachment(file.id)">
+                                      x
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -319,7 +290,6 @@
                               <icon-loader
                                 v-if="form.processing"
                                 class="animate-[spin_2s_linear_infinite] inline-block align-middle ltr:mr-2 rtl:ml-2 shrink-0" />
-
                               Add
                             </button>
                           </div>
@@ -345,13 +315,11 @@ import {
   DialogPanel,
   DialogOverlay
 } from '@headlessui/vue';
-import Swal from 'sweetalert2';
 import IconNotes from '@/Components/icon/icon-notes.vue';
 import IconNotesEdit from '@/Components/icon/icon-notes-edit.vue';
 import IconStar from '@/Components/icon/icon-star.vue';
 import IconPlus from '@/Components/icon/icon-plus.vue';
 import IconMenu from '@/Components/icon/icon-menu.vue';
-import IconUser from '@/Components/icon/icon-user.vue';
 import IconTrashLines from '@/Components/icon/icon-trash-lines.vue';
 import IconX from '@/Components/icon/icon-x.vue';
 import IconLoader from '@/Components/icon/icon-loader.vue';
@@ -362,7 +330,10 @@ import { quillEditor } from 'vue3-quill';
 import 'vue3-quill/lib/vue3-quill.css';
 import { useForm, usePage, Link, Head } from '@inertiajs/vue3';
 import type { project } from '@/interfaces/index.interfaces';
+import FileIcon from '@/Components/FileIcon.vue';
+import { useAppStore } from '@/stores';
 
+const store = useAppStore();
 const page = usePage();
 const attachmentForm = useForm({
   file: {} as any
@@ -397,11 +368,6 @@ const editorOptions = ref({
 const saveProject = () => {
   form.post(route('project.store'), {
     onSuccess: () => {
-      const project = {
-        title: form.title,
-        description: form.description
-      };
-      // projectsList.value.push(project);
       clearForm();
     }
   });
@@ -416,6 +382,7 @@ const clearForm = () => {
   form.reset('team_id');
   form.reset('files');
   form.clearErrors();
+  attachmentForm.clearErrors();
   uploadedFiles.value = [];
 };
 
@@ -439,129 +406,17 @@ const removeAttachment = (id: number) => {
   uploadedFiles.value = uploadedFiles.value.filter((file) => file.id != id);
 };
 
-const defaultParams = ref({
-  id: null,
-  title: '',
-  description: '',
-  tag: '',
-  user: '',
-  thumb: ''
-});
-const isAddNoteModal = ref(false);
-const isDeleteNoteModal = ref(false);
-const params = ref(JSON.parse(JSON.stringify(defaultParams.value)));
 const isShowNoteMenu = ref(false);
-const notesList = ref([
-  {
-    id: 1,
-    user: 'Max Smith',
-    thumb: 'profile-16.jpeg',
-    title: 'Meeting with Kelly',
-    description: 'Curabitur facilisis vel elit sed dapibus sodales purus rhoncus.',
-    date: '11/01/2020',
-    isFav: false,
-    tag: 'personal'
-  }
-]);
-const filterdNotesList: any = ref('');
+const filteredNotesList: any = ref('');
 const selectedTab: any = ref('all');
-const deletedNote: any = ref(null);
-const selectedNote: any = ref({
-  id: null,
-  title: '',
-  description: '',
-  tag: '',
-  user: '',
-  thumb: ''
-});
-
-onMounted(() => {
-  searchNotes();
-});
-
-const searchNotes = () => {
-  if (selectedTab.value != 'fav') {
-    if (selectedTab.value != 'all' || selectedTab.value === 'delete') {
-      filterdNotesList.value = notesList.value.filter((d) => d.tag === selectedTab.value);
-    } else {
-      filterdNotesList.value = notesList.value;
-    }
-  } else {
-    filterdNotesList.value = notesList.value.filter((d) => d.isFav);
-  }
-};
-
-const saveNote = () => {
-  if (!params.value.title) {
-    showMessage('Title is required.', 'error');
-    return false;
-  }
-  if (params.value.id) {
-    //update task
-    let note: any = notesList.value.find((d) => d.id === params.value.id);
-    note.title = params.value.title;
-    note.user = params.value.user;
-    note.description = params.value.description;
-    note.tag = params.value.tag;
-  } else {
-    //add note
-    let maxNoteId = notesList.value.length
-      ? notesList.value.reduce(
-          (max, character) => (character.id > max ? character.id : max),
-          notesList.value[0].id
-        )
-      : 0;
-    let dt = new Date();
-    let note = {
-      id: maxNoteId + 1,
-      title: params.value.title,
-      user: params.value.user,
-      thumb: 'profile-21.jpeg',
-      description: params.value.description,
-      date: dt.getDate() + '/' + Number(dt.getMonth()) + 1 + '/' + dt.getFullYear(),
-      isFav: false,
-      tag: params.value.tag
-    };
-    notesList.value.splice(0, 0, note);
-    searchNotes();
-  }
-
-  showMessage('Note has been saved successfully.');
-  isAddNoteModal.value = false;
-  searchNotes();
-};
 
 const tabChanged = (type: string) => {
   selectedTab.value = type;
-  searchNotes();
   isShowNoteMenu.value = false;
 };
 
 const setFav = (note: any) => {
-  let item = filterdNotesList.value.find((d) => d.id === note.id);
+  let item = filteredNotesList.value.find((d) => d.id === note.id);
   item.isFav = !item.isFav;
-  searchNotes();
-};
-
-const deleteNoteConfirm = (note: any) => {
-  setTimeout(() => {
-    deletedNote.value = note;
-    isDeleteNoteModal.value = true;
-  });
-};
-
-const showMessage = (msg = '', type = 'success') => {
-  const toast: any = Swal.mixin({
-    toast: true,
-    position: 'top',
-    showConfirmButton: false,
-    timer: 3000,
-    customClass: { container: 'toast' }
-  });
-  toast.fire({
-    icon: type,
-    title: msg,
-    padding: '10px 20px'
-  });
 };
 </script>

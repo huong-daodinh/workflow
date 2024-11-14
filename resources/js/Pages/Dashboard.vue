@@ -5,7 +5,7 @@ import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
 import { ref } from 'vue';
 import iconCaretDown from '@/Components/icon/icon-caret-down.vue';
 import VueCollapsible from 'vue-height-collapsible/vue3';
-import TaskDetail from '@/Components/task/TaskDetail.vue';
+import TaskDetail from './Task/TaskDetail.vue';
 import SubDetail from './Profile/SubDetail.vue';
 
 const accordions1 = ref<Array<number>>([]);

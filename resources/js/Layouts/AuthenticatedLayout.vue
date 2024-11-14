@@ -100,8 +100,10 @@ import Sidebar from '@/Components/layout/Sidebar.vue';
 import Header from '@/Components/layout/Header.vue';
 import Footer from '@/Components/layout/Footer.vue';
 import appSetting from '@/app-setting';
-
 import { useAppStore } from '@/stores/index';
+import { usePage } from '@inertiajs/vue3';
+
+const page = usePage();
 const store = useAppStore();
 const showTopButton = ref(false);
 onMounted(() => {
@@ -117,6 +119,7 @@ onMounted(() => {
   eleAnimation.addEventListener('animationend', function () {
     appSetting.changeAnimation('remove');
   });
+  store.toggleLocale(page.props.current_locale);
   store.toggleMainLoader();
 });
 

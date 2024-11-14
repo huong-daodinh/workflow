@@ -62,7 +62,8 @@
   }
 
   body {
-    @apply bg-[#fafafa] font-nunito;
+    /* @apply bg-[#fafafa] font-nunito; */
+    /* @apply bg-[#fafafa] font-sans; */
   }
 
   body.dark {
@@ -525,6 +526,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
   .dropdown ul {
     /* @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]; */
     @apply my-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark;
+    /* @apply my-1 w-fit rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark; */
   }
   .dropdown ul li > a,
   .dropdown ul li > button {
