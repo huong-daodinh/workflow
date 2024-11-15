@@ -16,12 +16,11 @@ class SetLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->segment(1) ?? 'en';
-        if (!in_array($locale, ['en', 'vn'])) {
-            $locale = 'en';
+        if ($locale = $request->cookie('locale')) {
+            app()->setLocale($locale);
+        } else if ($locale = session('locale')) {
+            app()->setLocale($locale);
         }
-        app()->setLocale($locale);
-        URL::defaults(['locale' => $locale]);
         return $next($request);
     }
 }

@@ -111,8 +111,7 @@
                         </div>
                       </div>
                       <div>
-                        <Link
-                          :href="route('project.show', { id: project.id, locale: store.locale })">
+                        <Link :href="route('project.show', { id: project.id })">
                           <h4 class="font-semibold mt-4 overflow-hidden">{{ project.title }}</h4>
                         </Link>
                       </div>

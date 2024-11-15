@@ -117,7 +117,11 @@ class TaskController extends Controller
 
     public function downloadAttachment($attachment)
     {
-      $attachment = TaskAttachment::findOrFail($attachment);
-      return response()->download(public_path($attachment->url), $attachment->slug);
+      $attachment = TaskAttachment::find($attachment);
+      if (!$attachment || !file_exists(public_path($attachment->url))) {
+        Session::flash('flash', ['type' => 'error', 'message' => 'File not found']);
+      } else {
+        return response()->download(public_path($attachment->url), $attachment->slug);
+      }
     }
 }

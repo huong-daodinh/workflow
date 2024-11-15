@@ -115,10 +115,12 @@
                     v-for="(file, index) in uploadedFiles"
                     :key="index"
                     class="flex justify-between col-span-1 mt-2 p-1 border-b-2 hover:border-primary">
-                    <span class="text-sm italic block h-fit underline text-primary">
+                    <a
+                      :href="route('task-attachment.download', { id: file.id })"
+                      class="text-sm italic block h-fit underline text-primary hover:font-bold">
                       <file-icon :extension="file.name.split('.').pop()" class="ml-1" />
                       {{ file.name }}
-                    </span>
+                    </a>
                     <span
                       class="text-sm p-1 cursor-pointer hover:text-primary block"
                       @click="removeAttachment(file.id)">
@@ -377,7 +379,6 @@ import { showMessage } from '@/functions/alert';
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import FileIcon from '@/Components/FileIcon.vue';
-import { useAppStore } from '@/stores';
 
 const options = ref({
   editor: ClassicEditor,
@@ -485,7 +486,6 @@ const datepickerOptions = ref<any>({
   position: 'auto left'
 });
 
-const store = useAppStore();
 const page = usePage();
 const isEditDescription = ref(false);
 const updateTaskResult = ref(false);
@@ -517,7 +517,7 @@ const onCancelUpdatingResult = () => {
 };
 
 const uploadAttachment = () => {
-  attachmentForm.post(route('task-attachment.upload', { locale: store.locale }), {
+  attachmentForm.post(route('task-attachment.upload'), {
     onSuccess: () => {
       const file = page.props.flash_data.file;
       uploadedFiles.value.push({

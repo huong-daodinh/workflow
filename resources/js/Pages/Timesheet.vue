@@ -130,7 +130,7 @@ import vnLocale from '@fullcalendar/core/locales/vi';
 import enLocale from '@fullcalendar/core/locales/en-gb';
 
 const localeMatch = {
-  vn: vnLocale,
+  vi: vnLocale,
   en: enLocale
 };
 

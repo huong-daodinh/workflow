@@ -13,6 +13,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimesheetController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
@@ -28,7 +29,14 @@ use Inertia\Inertia;
 |
 */
 
-
+Route::get('/setlocale/{locale}', function ($locale) {
+    if (!in_array($locale, ['en', 'vi'])) {
+      $locale = 'vi';
+    }
+    Session::put('locale', $locale);
+    Cookie::queue(Cookie::forever('locale', $locale));
+    return redirect()->back();
+})->name('set-locale');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {

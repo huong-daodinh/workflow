@@ -76,8 +76,9 @@
                   class="!px-2 text-dark dark:text-white-dark grid grid-cols-2 gap-2 font-semibold dark:text-white-light/90 w-[320px]">
                   <template v-for="item in store.languageList" :key="item.code">
                     <li>
-                      <button
-                        as="button"
+                      <Link
+                        as="a"
+                        :href="route('set-locale', item.code)"
                         class="w-full hover:text-primary"
                         :class="{ 'bg-primary/10 text-primary': i18n.locale === item.code }"
                         @click="changeLanguage(item), close()">
@@ -86,7 +87,7 @@
                           :src="`/assets/images/flags/${item.code.toUpperCase()}.svg`"
                           alt="" />
                         <span class="ltr:ml-3 rtl:mr-3">{{ item.name }}</span>
-                      </button>
+                      </Link>
                     </li>
                   </template>
                 </ul>
