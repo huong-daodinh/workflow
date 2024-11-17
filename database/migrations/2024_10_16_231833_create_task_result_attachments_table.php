@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('task_result_attachments', function (Blueprint $table) {
             $table->id();
             $table->string('url');
-            $table->foreignId('task_result_id')->constrained(table: 'task_results', column: 'id');
+            $table->string('slug');
+            $table->foreignId('task_id')->constrained();
             $table->softDeletes();
             $table->timestamps();
         });

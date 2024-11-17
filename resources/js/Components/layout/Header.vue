@@ -256,8 +256,8 @@
               class="!block">
               <button type="button" class="relative group block">
                 <span
-                  class="flex justify-center items-center w-9 h-9 text-center rounded-full object-cover bg-info text-base">
-                  AG
+                  class="flex justify-center items-center w-9 h-9 text-center rounded-full object-cover bg-danger text-base">
+                  {{ $page.props.auth.user.name.charAt(0) + $page.props.auth.user.name.charAt(1) }}
                 </span>
               </button>
               <template #content="{ close }">
@@ -268,7 +268,10 @@
                       <div class="flex-none">
                         <span
                           class="flex justify-center items-center w-10 h-10 text-center rounded-full object-cover bg-danger text-base">
-                          AG
+                          {{
+                            $page.props.auth.user.name.charAt(0) +
+                            $page.props.auth.user.name.charAt(1)
+                          }}
                         </span>
                       </div>
                       <div class="ltr:pl-4 rtl:pr-4 truncate">

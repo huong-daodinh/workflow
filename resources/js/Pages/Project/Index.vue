@@ -102,7 +102,7 @@
                     class="panel pb-12"
                     :class="{
                       'bg-primary-light shadow-primary': project.type === 'P',
-                      'bg-warning-light shadow-warning': project.type === 'T'
+                      'bg-secondary-light shadow-secondary': project.type === 'D'
                     }">
                     <div class="h-[142px]">
                       <div class="flex justify-between">
@@ -119,10 +119,7 @@
                     <div class="absolute bottom-5 left-0 w-full px-5">
                       <div class="flex items-center justify-between mt-2">
                         <div class="flex items-center">
-                          <button
-                            type="button"
-                            class="text-danger"
-                            @click="deleteprojectConfirm(project)">
+                          <button type="button" class="text-danger">
                             <icon-trash-lines />
                           </button>
                           <button
@@ -330,9 +327,7 @@ import 'vue3-quill/lib/vue3-quill.css';
 import { useForm, usePage, Link, Head } from '@inertiajs/vue3';
 import type { project } from '@/interfaces/index.interfaces';
 import FileIcon from '@/Components/FileIcon.vue';
-import { useAppStore } from '@/stores';
 
-const store = useAppStore();
 const page = usePage();
 const attachmentForm = useForm({
   file: {} as any

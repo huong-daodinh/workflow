@@ -1,20 +1,27 @@
 <template>
   <div>
-    <label for="" class="uppercase text-dark text-lg"
-      >{{ $t('comments') }} ({{ messages.length }})</label
-    >
-    <div v-if="messages.length > 0" class="max-h-[calc(50vh-80px)] overflow-y-auto mb-5 chat-box">
+    <label for="" class="uppercase text-dark text-lg">
+      {{ $t('comments') }} ({{ messages.length }})
+    </label>
+    <div
+      v-if="messages.length > 0"
+      class="relative max-h-[calc(50vh-80px)] overflow-y-auto mb-5 chat-box">
+      <!-- <div class="absolute bottom-0 left-1/2 -translate-x-1/2">
+        <span class="badge bg-primary z-10"> New message</span>
+      </div> -->
       <div class="flex mb-5 relative" v-for="(message, index) in messages" :key="index">
-        <!-- loading -->
-        <div
-          v-if="isSendingMessage.includes(Number(message.id))"
-          class="absolute inset-0 bg-primary-light flex justify-center items-center bg-opacity-50">
-          <span
-            class="animate-spin border-4 border-primary border-l-transparent rounded-full w-10 h-10 inline-block align-middle m-auto mb-10"></span>
-        </div>
         <!-- message -->
         <div class="mr-4">
-          <img src="/assets/images/profile-5.jpeg" alt="" class="w-10 h-10 rounded" />
+          <img
+            :src="message.sent_by.avatar"
+            v-if="message.sent_by.avatar"
+            alt=""
+            class="w-10 h-10 rounded-full" />
+          <span
+            v-else
+            class="flex justify-center items-center w-9 h-9 text-center rounded-full object-cover bg-info text-base">
+            {{ message.sent_by.name.slice(0, 2).toUpperCase() }}
+          </span>
         </div>
         <div class="flex-1">
           <span class="text-dark font-bold">{{ message.sent_by.name }}</span>
@@ -24,19 +31,19 @@
           <ul class="flex space-x-4 rtl:space-x-reverse font-bold">
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
-                <icon-message-dots />
+                <icon-edit class="mr-2" />
+                {{ $t('edit') }}
+              </a>
+            </li>
+            <li>
+              <a href="javascript:;" class="flex items-center hover:text-primary">
+                <icon-message-dots class="mr-1" />
                 {{ $t('response') }}
               </a>
             </li>
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
-                <icon-edit />
-                {{ $t('reply') }}
-              </a>
-            </li>
-            <li>
-              <a href="javascript:;" class="flex items-center hover:text-primary">
-                <icon-trash />
+                <icon-trash class="mr-1" />
                 {{ $t('delete') }}
               </a>
             </li>
@@ -89,19 +96,15 @@ import IconSend from '@/Components/icon/icon-send.vue';
 import IconMessageDots from '@/Components/icon/icon-message-dots.vue';
 import IconEdit from '@/Components/icon/icon-edit.vue';
 import IconTrash from '@/Components/icon/icon-trash.vue';
-import { defineProps, onMounted, ref, defineEmits } from 'vue';
+import { defineProps, onMounted, ref, defineEmits, onBeforeUnmount } from 'vue';
 import type { task_message } from '@/interfaces/index.interfaces';
 import { getTaskMessages } from '@/services/task.service';
-import { usePage } from '@inertiajs/vue3';
 import { sendTaskMessage } from '@/services/task.service';
 import { Mentionable } from 'vue-mention';
 // import Echo from 'laravel-echo';
-
-const isSendingMessage = ref<Array<number>>([]);
-const page = usePage();
-const authUser = page.props.auth.user;
 const canSendMessage = ref(true);
 
+const newMessageReceived = ref(false);
 const emits = defineEmits(['messageSent']);
 const props = defineProps({
   taskId: {
@@ -160,25 +163,20 @@ const sendMessage = async () => {
   if (messageInput.value.trim() === '') {
     return;
   }
-  const message = {
-    id: messages.value.length + 1,
-    content: messageInput.value,
-    sent_by: authUser
-  };
-  messages.value.push(message);
-  isSendingMessage.value.push(message.id);
-  await sendTaskMessage(props.taskId, messageInput.value).finally(() => {
-    isSendingMessage.value = isSendingMessage.value.filter((id) => id !== message.id);
-    messageInput.value = '';
-    emits('messageSent');
-    scrollToBottom();
-  });
+  await sendTaskMessage(props.taskId, messageInput.value)
+    .then((response) => {
+      messages.value.push(response.data.message);
+    })
+    .finally(() => {
+      messageInput.value = '';
+      emits('messageSent');
+      scrollToBottom();
+    });
 };
 
 const scrollToBottom = () => {
   setTimeout(() => {
     const element: any = document.querySelector('.chat-box');
-    element.behavior = 'smooth';
     element.scrollTop = element.scrollHeight;
   });
 };
@@ -188,8 +186,12 @@ onMounted(async () => {
     messages.value = res.data;
     scrollToBottom();
   });
-  // Echo.channel(`TaskConversation.${props.taskId}`).listen('message-posted', (data: any) => {
-  //   messages.value.push(data.message);
-  // });
+  Echo.channel(`presence-task.${props.taskId}`).listen('TaskMessagePosted', (data: any) => {
+    messages.value.push(data.message);
+  });
+});
+
+onBeforeUnmount(() => {
+  Echo.leave(`presence-task.${props.taskId}`);
 });
 </script>

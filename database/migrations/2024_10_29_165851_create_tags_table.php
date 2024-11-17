@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('color');
             $table->string('slug');
+            $table->boolean('is_custom')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

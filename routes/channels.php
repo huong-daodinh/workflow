@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -17,6 +18,15 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('TaskConversation.{taskId}', function ($user, $taskID) {
-    return $user->tasks()->find($taskID) ? true : false;
+Broadcast::channel('task.{task}', function ($user, $task) {
+    return Auth::check();
+});
+
+Broadcast::channel('room.{room}', function ($user, $room) {
+  $user->new_messages = 0;
+  return $user;
+});
+
+Broadcast::channel('Chat.{chatId}', function ($user, $chatId) {
+    return $user->chats()->find($chatId);
 });

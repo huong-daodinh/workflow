@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('project_attachments', function (Blueprint $table) {
             $table->id();
             $table->string('url');
-            $table->foreignId('project_id')->constrained();
+            $table->string('slug');
+            $table->foreignId('project_id')->nullable()->constrained();
             $table->softDeletes();
             $table->timestamps();
         });

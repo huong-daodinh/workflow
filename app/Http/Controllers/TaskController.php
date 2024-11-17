@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskRequest;
 use App\Models\Tag;
 use App\Models\Task;
 use App\Models\TaskAttachment;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
 
 class TaskController extends Controller
 {
@@ -40,8 +46,16 @@ class TaskController extends Controller
     public function show($id)
     {
         $task = Task::findOrFail($id);
-        $task->load(['subTasks', 'assigner', 'messages', 'tags', 'followers', 'attachments']);
-        return response()->json($task);
+        $task->load([
+          'subTasks.assignee',
+          'subTasks.tags',
+          'assigner',
+          'messages',
+          'tags',
+          'followers',
+          'attachments',
+        ]);
+        return response()->json(['task' => $task]);
     }
 
     /**
@@ -55,9 +69,16 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(TaskRequest $request, $task)
     {
-        //
+      try {
+        $task = Task::findOrFail($task);
+        $validated = $request->validated();
+        $task->update($validated);
+        Session::flash('flash', ['type' => 'success', 'message' => 'Task updated']);
+      } catch (\Exception $e) {
+        Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+      }
     }
 
     /**
@@ -68,34 +89,42 @@ class TaskController extends Controller
         //
     }
 
-    public function markAsDone( $taskId)
-    {
-        try {
-          $task = Task::findOrFail($taskId);
-          if ($task->result) {
-            $task->update(['status' => 'done']);
-            $completedTag = Tag::where('slug', 'completed')->first();
-            $task->tags()->sync([$completedTag->id]);
-            return response()->json(['type' => 'success', 'message' => 'Task updated']);
-          } else {
-            return response()->json(['type' => 'error', 'message' => 'Enter task result before marking as done']);
-          }
-        } catch(\Exception $e) {
-          return response()->json(['type' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
+    public function startTask(Request $request, $id) {
+      try {
+        $task = Task::findOrFail($id);
+        $response = Gate::inspect('start', $task);
+        if ($response->allowed()) {
+          $validated = $request->validate([
+            'started_at' => 'required|date',
+            'status' => 'required|string',
+          ]);
+          $task->update($validated);
+          Session::flash('flash', ['type' => 'success', 'message' => 'Task started']);
+        } else {
+          throw new \Exception('Không thể thực hiện hành động này');
         }
+      } catch(\Exception $e) {
+        return Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+      }
     }
 
-    public function updateResult(Request $request, $taskId)
+    public function markAsDone($task)
     {
         try {
-          $task = Task::findOrFail($taskId);
-          $data = $request->validate([
-            'result' => 'required',
-          ]);
-          $task->update($data);
-          return response()->json(['type' => 'success', 'message' => 'Result updated']);
-        } catch (\Exception $e) {
-          return response()->json(['type' => 'error', 'message' => $e->getMessage()]);
+          $task = Task::findOrFail($task);
+          $response = Gate::inspect('done', $task);
+          if ($response->allowed()) {
+            if ($task->result) {
+              $task->update(['status' => 'done']);
+              Session::flash('flash', ['type' => 'success', 'message' => 'Task updated']);
+            } else {
+              throw new \Exception('Chưa cập nhật kết quả làm việc');
+            }
+          } else {
+            throw new \Exception('Không thể thực hiện hành động này');
+          }
+        } catch(\Exception $e) {
+          Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
         }
     }
 
@@ -122,6 +151,50 @@ class TaskController extends Controller
         Session::flash('flash', ['type' => 'error', 'message' => 'File not found']);
       } else {
         return response()->download(public_path($attachment->url), $attachment->slug);
+      }
+    }
+
+    public function deleteAttachment($attachment)
+    {
+      $attachment = TaskAttachment::find($attachment);
+      if (!$attachment || !file_exists(public_path($attachment->url))) {
+        Session::flash('flash', ['type' => 'error', 'message' => 'File not found']);
+      } else {
+        unlink(public_path($attachment->url));
+        $attachment->delete();
+        Session::flash('flash', ['type' => 'success', 'message' => 'Attachment deleted']);
+      }
+    }
+
+    public function closeTask($id) {
+        $task = Task::findOrFail($id);
+        $response = Gate::inspect('process-task', $task);
+        if ($response->allowed()) {
+          $task->update(['status' => 'closed']);
+          Session::flash('flash', ['type' => 'success', 'message' => 'Task closed']);
+        }
+    }
+
+    public function rejectTask($id) {
+        $task = Task::findOrFail($id);
+        $response = Gate::inspect('process-task', $task);
+        if ($response->allowed()) {
+          $task->update(['status' => 'todo']);
+          Session::flash('flash', ['type' => 'success', 'message' => 'Task rejected']);
+        }
+
+    }
+
+    public function updateTaskResult(Request $request, $task) {
+      try {
+        $task = Task::findOrFail($task);
+        $validated = $request->validate([
+          'result' => 'required|string'
+        ]);
+        $task->update($validated);
+        Session::flash('flash', ['type' => 'success', 'message' => 'Task updated']);
+      } catch (\Exception $e) {
+        Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
       }
     }
 }

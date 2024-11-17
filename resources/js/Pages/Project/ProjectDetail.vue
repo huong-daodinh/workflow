@@ -3,11 +3,12 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue';
 import { ref, defineProps, onBeforeMount, watch } from 'vue';
-import type { project } from '@/interfaces/index.interfaces';
+import type { project, user } from '@/interfaces/index.interfaces';
 import ProjectListView from '@/Components/project/ProjectListView.vue';
 import ProjectBoardView from '@/Components/project/ProjectBoardView.vue';
 import { useAppStore } from '@/stores';
 import SubDetail from '../Profile/SubDetail.vue';
+import ProjectAnalyze from '@/Components/project/ProjectAnalyze.vue';
 
 const appStore = useAppStore();
 const accordions1 = ref<Array<number>>([]);
@@ -22,6 +23,14 @@ watch(projectViewStyle, (value) => {
 const props = defineProps({
   project: {
     type: Object as () => project,
+    required: true
+  },
+  assignees: {
+    type: Array as () => user[],
+    required: true
+  },
+  assigners: {
+    type: Array as () => user[],
     required: true
   }
 });
@@ -61,16 +70,16 @@ const onUpdateSelectedTask = (taskId: number) => {
                   </Tab>
                   <Tab as="template" v-slot="{ selected }">
                     <button
-                      class="p-3.5 py-2 -mb-[1px] block rounded hover:bg-primary hover:text-white !outline-none transition duration-300"
+                      class="p-3.5 py-2 -mb-[1px] ltr:mr-2 rtl:ml-2 block rounded hover:bg-primary hover:text-white !outline-none transition duration-300"
                       :class="{ 'bg-primary text-white': selected }">
-                      My employees
+                      Detail
                     </button>
                   </Tab>
                   <Tab as="template" v-slot="{ selected }">
                     <button
                       class="p-3.5 py-2 -mb-[1px] block rounded hover:bg-primary hover:text-white !outline-none transition duration-300"
                       :class="{ 'bg-primary text-white': selected }">
-                      Followings
+                      Analyze
                     </button>
                   </Tab>
                 </TabList>
@@ -93,6 +102,8 @@ const onUpdateSelectedTask = (taskId: number) => {
                     <div v-if="projectViewStyle === 'list'">
                       <project-list-view
                         :project_id="project.id"
+                        :assignees="assignees"
+                        :assigners="assigners"
                         :task_lists="project.task_lists"
                         @update:selected-task="onUpdateSelectedTask" />
                     </div>
@@ -101,33 +112,44 @@ const onUpdateSelectedTask = (taskId: number) => {
                     </div>
                   </TabPanel>
                   <TabPanel>
-                    <div class="flex items-start">
-                      <div class="w-20 h-20 ltr:mr-4 rtl:ml-4 flex-none">
-                        <img
-                          src="/assets/images/profile-34.jpeg"
-                          alt=""
-                          class="w-20 h-20 m-0 rounded-full ring-2 ring-[#ebedf2] dark:ring-white-dark object-cover" />
+                    <div class="flex flex-col gap-5">
+                      <div class="flex items-start panel rounded-lg shadow-md">
+                        <div class="w-32 ltr:mr-4 rtl:ml-4 flex-none text-lg font-bold">
+                          {{ $t('Description') }}
+                        </div>
+                        <div class="flex-auto">
+                          <h5 class="text-lg font-medium mb-4">Description</h5>
+                          <p v-html="project.description" />
+                        </div>
                       </div>
-                      <div class="flex-auto">
-                        <h5 class="text-xl font-medium mb-4">Media heading</h5>
-                        <p class="text-white-dark">
-                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque
-                          ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus
-                          viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec
-                          lacinia congue felis in faucibus.
-                        </p>
+                      <div>
+                        <div class="flex items-start panel rounded-lg shadow-md">
+                          <div class="w-32 ltr:mr-4 rtl:ml-4 flex-none text-lg font-bold">
+                            {{ $t('attachments') }}
+                          </div>
+                          <div class="flex-auto">
+                            <h5 class="text-lg font-medium mb-4">Click to down load</h5>
+                            <div
+                              v-for="(attachment, index) in project.attachments"
+                              :key="index"
+                              class="mt-2">
+                              <Link
+                                method="get"
+                                as="button"
+                                :href="route('project-attachment.download', attachment.id)"
+                                class="text-primary italic underline hover:text-info">
+                                {{ attachment.slug }}
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </TabPanel>
+                    </div></TabPanel
+                  >
                   <TabPanel>
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                      quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                      cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                      proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
+                    <div class="panel flex-1">
+                      <project-analyze :project="project.id" />
+                    </div>
                   </TabPanel>
                 </TabPanels>
               </TabGroup>

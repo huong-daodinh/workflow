@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
         'avatar',
         'phone',
+        'role',
+        'department_id',
     ];
 
     /**
@@ -46,9 +48,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function memberOf()
+    public function department()
     {
-        return $this->hasManyThrough(Team::class, 'team_members', 'member_id', 'team_id');
+        return $this->belongsTo(Department::class);
     }
 
     public function createdProjects()
@@ -69,5 +71,10 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->hasManyThrough(Task::class, TaskFollower::class, 'user_id', 'id', 'id', 'task_id');
+    }
+
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_members', 'member_id', 'chat_id');
     }
 }

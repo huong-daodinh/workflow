@@ -20,12 +20,7 @@
             <icon-carets-down class="m-auto rotate-90" />
           </button>
         </div>
-        <perfect-scrollbar
-          :options="{
-            swipeEasing: true,
-            wheelPropagation: false
-          }"
-          class="h-[calc(100vh-80px)] relative">
+        <div class="h-[calc(100vh-80px)] relative overflow-y-auto">
           <ul class="relative font-semibold space-y-0.5 p-4 py-0">
             <li class="menu nav-item">
               <button
@@ -52,14 +47,14 @@
                 <ul class="sub-menu text-gray-500">
                   <li class="hover:bg-gray-100 rounded">
                     <Link :href="route('dashboard')" @click="toggleMobileMenu">{{
-                      $t('jobs')
+                      $t('home')
                     }}</Link>
                   </li>
-                  <li class="hover:bg-gray-100 rounded">
+                  <!-- <li class="hover:bg-gray-100 rounded">
                     <Link :href="route('analyze')" @click="toggleMobileMenu">{{
                       $t('analytics')
                     }}</Link>
-                  </li>
+                  </li> -->
                 </ul>
               </vue-collapsible>
             </li>
@@ -96,7 +91,7 @@
             </li>
 
             <li class="menu nav-item">
-              <Link
+              <!-- <Link
                 :href="route('team.index')"
                 :class="{ active: isUrl('team') }"
                 class="nav-link group w-full"
@@ -108,7 +103,7 @@
                     {{ $t('team') }}
                   </span>
                 </div>
-              </Link>
+              </Link> -->
             </li>
 
             <h2
@@ -128,7 +123,7 @@
               </button>
             </li>
           </ul>
-        </perfect-scrollbar>
+        </div>
       </div>
     </nav>
   </div>
@@ -192,7 +187,6 @@ watch(
   () => page.props.flash,
   () => {
     showMessage(page.props.flash.message, page.props.flash.type);
-    console.log(page.props.flash);
   }
 );
 </script>

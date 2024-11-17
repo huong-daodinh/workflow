@@ -12,7 +12,6 @@ class Task extends Model
     protected $fillable = [
       'title',
       'priority',
-      'description',
       'status',
       'result',
       'task_list_id',
@@ -21,12 +20,11 @@ class Task extends Model
       'due_date',
       'description',
       'assignee_id',
-      'start_date',
-      'due_date'
+      'started_at',
     ];
 
     public function followers() {
-      return $this->hasManyThrough(User::class, TaskFollower::class, 'task_id', 'id', 'id', 'user_id');
+      return $this->belongsToMany(User::class, 'task_followers', 'task_id', 'user_id');
     }
 
     public function messages() {
@@ -46,11 +44,14 @@ class Task extends Model
     }
 
     public function tags() {
-      // return $this->hasManyThrough(Tag::class, TaskTag::class, 'task_id', 'id', 'id', 'tag_id');
       return $this->belongsToMany(Tag::class, 'tasks_tags', 'task_id', 'tag_id');
     }
 
     public function attachments() {
       return $this->hasMany(TaskAttachment::class, 'task_id');
+    }
+
+    public function project() {
+      return $this->belongsTo(Project::class, 'project_id');
     }
 }

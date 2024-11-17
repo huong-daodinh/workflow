@@ -84,7 +84,7 @@
                             type="checkbox"
                             class="form-checkbox mt-1.5 text-success"
                             :id="`task_${task.id}_checkbox`"
-                            :checked="task.status === 'done'" />
+                            :checked="task.status === 'done' || task.status === 'closed'" />
                         </div>
                         <div class="w-full border-b-2 pb-4 mb-5 relative">
                           <div class="flex justify-between items-start">
@@ -93,7 +93,8 @@
                                 :id="`task_${task.id}`"
                                 class="cursor-pointer font-semibold text-lg text-primary"
                                 :class="{
-                                  'text-success line-through': task.status === 'done'
+                                  'text-success line-through':
+                                    task.status === 'done' || task.status === 'closed'
                                 }"
                                 @click="onSelectTask(task.id)">
                                 {{ task.title }}
@@ -139,7 +140,7 @@
                           </div>
 
                           <!-- subtask -->
-                          <div v-if="task.sub_tasks.length > 0">
+                          <!-- <div v-if="task.sub_tasks.length > 0">
                             <div
                               class="flex mt-5"
                               v-for="(sub_task, index) in task.sub_tasks"
@@ -208,7 +209,7 @@
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </div> -->
                         </div>
                       </div>
                     </div>
@@ -220,7 +221,7 @@
         </div>
       </div>
 
-      <div class="panel flex-1 overflow-auto h-full detail-box">
+      <div class="panel flex-1 overflow-auto h-full detail-box relative">
         <div>
           <button
             type="button"
@@ -239,8 +240,9 @@
             <task-detail
               :key="selectedTask"
               :taskId="selectedTask"
+              :assigners="assigners"
+              :assignees="assignees"
               @close="onClose"
-              @mark-as-done="onMarkAsDone($event)"
               @scroll-to-bottom="scrollToBottom" />
           </div>
         </div>
@@ -389,7 +391,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { task_list } from '@/interfaces/index.interfaces';
+import type { task_list, user } from '@/interfaces/index.interfaces';
 import {
   TransitionRoot,
   TransitionChild,
@@ -412,7 +414,6 @@ import IconHorizontalDots from '@/Components/icon/icon-horizontal-dots.vue';
 import IconTrashLines from '@/Components/icon/icon-trash-lines.vue';
 import { useForm, Link } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
-import { useAppStore } from '@/stores';
 
 const taskListForm = useForm({
   id: null,
@@ -420,7 +421,6 @@ const taskListForm = useForm({
   project_id: null
 });
 
-const store = useAppStore();
 const selectedTask = ref(0);
 const isAddTaskListModal = ref(false);
 const isDeleteTaskListModal = ref(false);
@@ -431,6 +431,14 @@ const emits = defineEmits(['update:selectedTask']);
 const props = defineProps({
   task_lists: {
     type: Array as () => task_list[],
+    required: true
+  },
+  assigners: {
+    type: Array as () => user[],
+    required: true
+  },
+  assignees: {
+    type: Array as () => user[],
     required: true
   },
   project_id: {
@@ -463,19 +471,6 @@ const onSelectTask = (taskId: number) => {
 const onClose = () => {
   selectedTask.value = 0;
   emits('update:selectedTask', 0);
-};
-
-const onMarkAsDone = (taskId: number) => {
-  const element = document.querySelector(`#task_${taskId}`);
-  const checkbox = document.querySelector(`#task_${taskId}_checkbox`) as HTMLInputElement;
-  if (element) {
-    element.classList.add('line-through');
-    element.classList.add('text-success');
-  }
-
-  if (checkbox) {
-    checkbox.checked = true;
-  }
 };
 
 const scrollToBottom = () => {

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
-            $table->string('avatar');
+            $table->string('avatar')->nullable();
             $table->string('name');
+            $table->boolean('is_private_chat');
             $table->softDeletes();
             $table->timestamps();
         });

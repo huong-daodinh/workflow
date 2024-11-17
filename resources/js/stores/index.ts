@@ -112,7 +112,7 @@ export const useAppStore = defineStore('app', {
       this.isShowMainLoader = true;
       setTimeout(() => {
         this.isShowMainLoader = false;
-      }, 500);
+      }, 700);
     },
 
     toggleProjectViewStyle(payload: any = null) {

@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('subtasks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('title');
             $table->integer('priority')->nullable();
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('duel_date')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('due_date')->nullable();
             $table->string('status')->default('doing');
-            $table->text('description')->nullable();
-            $table->foreignId('assignee_id')->constrained(table: 'users', column: 'id');
-            $table->foreignId('assigner_id')->constrained(table: 'users', column: 'id');
+            $table->text('description');
+            $table->text('result')->nullable();
+            $table->foreignId('assignee_id')->nullable()->constrained(table: 'users', column: 'id');
+            $table->foreignId('assigner_id')->nullable()->constrained(table: 'users', column: 'id');
             $table->foreignId('task_id')->constrained();
+            $table->foreignId('created_by')->constrained(table: 'users', column: 'id');
             $table->softDeletes();
             $table->timestamps();
         });

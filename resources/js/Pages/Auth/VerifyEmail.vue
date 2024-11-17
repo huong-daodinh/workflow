@@ -38,15 +38,13 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
         <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
           Resend Verification Email
         </PrimaryButton>
-
-        <Link
-          :href="route('logout')"
-          method="post"
-          as="button"
-          class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >Log Out</Link
-        >
       </div>
+      <Link
+        method="post"
+        as="button"
+        class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+        Log Out
+      </Link>
     </form>
   </GuestLayout>
 </template>

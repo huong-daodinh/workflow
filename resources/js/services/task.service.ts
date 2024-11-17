@@ -1,5 +1,4 @@
-import { task } from './../interfaces/index.interfaces';
-import axios from 'axios';
+const axios = window.axios;
 
 export async function getTaskDetail($taskId: number) {
   const response = await axios.get(`/task/${$taskId}`);

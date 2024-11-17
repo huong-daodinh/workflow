@@ -7,7 +7,7 @@
             <div class="p-0 w-full text-black dark:text-white-dark">
               <button
                 type="button"
-                class="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
+                class="absolute ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
                 @click="emits('close')">
                 <icon-x />
               </button>
@@ -23,13 +23,15 @@
                 {{ $t('in_project') }}
               </p>
               <div class="flex mb-5 gap-x-8">
-                <div v-if="taskData.started_at">{{ taskData.started_at }}</div>
-                <flat-pickr
-                  v-else
-                  @on-change="onStartTask($event)"
-                  class="form-input w-1/3 pl-5 py-1"
-                  :config="datepickerOptions" />
-                <div class="col-span-1 text-sm flex items-center gap-x-2 font-bold">
+                <div class="text-sm font-bold" v-if="taskData.started_at">
+                  {{ taskData.started_at }}
+                </div>
+                <div v-else>
+                  <button type="button" class="btn btn-primary" @click="startTask">
+                    {{ $t('start') }}
+                  </button>
+                </div>
+                <div class="col-span-1 flex items-center gap-x-2 text-sm font-bold">
                   <icon-clock />
                   {{ taskData.due_date }}
                 </div>
@@ -37,7 +39,12 @@
             </div>
             <div class="mb-5 flex gap-x-10">
               <div>
-                <button type="button" v-tippy:hover class="btn btn-primary" @click="onMarkAsDone">
+                <button
+                  type="button"
+                  v-tippy:hover
+                  :disabled="taskData.started_at === null || canPerform(taskData.status)"
+                  class="btn btn-primary"
+                  @click="onMarkAsDone">
                   {{ $t('mark_as_done') }}
                 </button>
                 <tippy target="hover" trigger="mouseenter">{{ $t('click_to_mark_done') }}</tippy>
@@ -52,7 +59,8 @@
                 <label for="" class="uppercase text-primary">{{ $t('task_description') }}</label>
                 <button
                   v-if="!isEditDescription"
-                  class="p-1 text-blue-500 hover:underline"
+                  :disabled="canPerform(taskData.status)"
+                  class="btn btn-outline-secondary"
                   @click="isEditDescription = true">
                   {{ $t('edit') }}
                 </button>
@@ -95,6 +103,7 @@
                     </div>
                     <input
                       type="file"
+                      :disabled="canPerform(taskData.status)"
                       ref="uploadFile"
                       @input="attachmentForm.file = $event.target?.files[0]"
                       class="form-input rounded-l-none" />
@@ -135,6 +144,7 @@
               <button
                 class="btn btn-outline-secondary"
                 @click="updateTaskResult = true"
+                :disabled="canPerform(taskData.status)"
                 v-if="!updateTaskResult">
                 {{ $t('update_task_result') }}
               </button>
@@ -143,19 +153,20 @@
                   :config="options.editorConfig"
                   v-model="taskData.result"
                   :editor="options.editor" />
+                <input-error :message="taskForm.errors.result" />
                 <div class="flex justify-end mt-1 gap-x-3">
-                  <button type="button" class="btn btn-primary" @click="onUpdateResult">
+                  <button type="button" class="btn btn-primary" @click="updateResult">
                     {{ $t('save') }}
                   </button>
                   <button
                     type="button"
                     class="btn btn-outline-danger"
-                    @click="onCancelUpdatingResult">
+                    @click="cancelUpdatingResult">
                     {{ $t('cancel') }}
                   </button>
                 </div>
               </div>
-              <div class="pl-5" v-else>
+              <div class="pl-5 mt-2" v-else>
                 <div v-html="taskData.result" />
               </div>
             </div>
@@ -163,22 +174,16 @@
             <div class="mb-5">
               <label for="" class="uppercase text-dark text-xl mb-5">{{ $t('sub_tasks') }}</label>
               <div v-if="taskData.sub_tasks">
-                <div
-                  v-for="(sub_task, index) in taskData.sub_tasks"
-                  :key="index"
-                  class="flex items-center p-3 mb-3 rounded border"
-                  :class="{
-                    'text-success bg-success-light border-success': sub_task.status === 'done',
-                    ' text-secondary bg-secondary-light border-secondary':
-                      sub_task.status !== 'done'
-                  }">
-                  <span class="ltr:pr-2 rtl:pl-2">
-                    <strong class="ltr:mr-2 rtl:ml-2">{{ sub_task.status }}</strong>
-                    Lorem Ipsum is simply dummy text of the printing.
-                  </span>
-                </div>
+                <subtask
+                  v-for="subTask in taskData.sub_tasks"
+                  :sub_task="subTask"
+                  :key="subTask.id"
+                  @update-sub-task="editSubtask(subTask.id)" />
               </div>
-              <button class="btn btn-outline-success" @click="isAddSubtask = true">
+              <button
+                class="btn btn-outline-success"
+                @click="addSubtask()"
+                :disabled="canPerform(taskData.status)">
                 {{ $t('add_subtask') }}
               </button>
             </div>
@@ -194,12 +199,180 @@
         </div>
       </div>
       <div class="col-span-1">
-        <task-sub-detail />
+        <task-sub-detail :task="taskData" />
       </div>
     </div>
-    <!-- Modal -->
+    <!-- Subtask Modal -->
     <TransitionRoot appear :show="isAddSubtask" as="template">
       <Dialog as="div" @close="isAddSubtask = false" class="relative z-50">
+        <TransitionChild
+          as="template"
+          enter="duration-300 ease-out"
+          enter-from="opacity-0"
+          enter-to="opacity-100"
+          leave="duration-200 ease-in"
+          leave-from="opacity-100"
+          leave-to="opacity-0">
+          <DialogOverlay class="fixed inset-0 bg-[black]/60" />
+        </TransitionChild>
+
+        <div class="fixed inset-0 overflow-y-auto">
+          <div class="flex min-h-full items-center justify-center">
+            <TransitionChild
+              as="template"
+              enter="duration-300 ease-out"
+              enter-from="opacity-0 scale-95"
+              enter-to="opacity-100 scale-100"
+              leave="duration-200 ease-in"
+              leave-from="opacity-100 scale-100"
+              leave-to="opacity-0 scale-95">
+              <DialogPanel
+                class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-2xl text-black dark:text-white-dark">
+                <button
+                  type="button"
+                  class="absolute top-5 ltr:right-5 rtl:left-5 text-white-dark hover:text-dark outline-none"
+                  @click="closeModal">
+                  <icon-x />
+                </button>
+                <div
+                  class="text-lg font-semibold ltr:pl-5 rtl:pr-5 py-5 ltr:pr-[50px] rtl:pl-[50px]">
+                  {{ 'Add Subtask' }}
+                </div>
+                <div class="p-5">
+                  <form class="space-y-5" @submit.prevent="saveSubtask">
+                    <div class="mb-4">
+                      <label for="">{{ $t('title') }}</label>
+                      <div class="relative">
+                        <span
+                          class="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 dark:text-white-dark">
+                          <icon-pencil-paper />
+                        </span>
+                        <input
+                          type="text"
+                          v-model="subtaskForm.title"
+                          placeholder="Title"
+                          class="form-input ltr:pl-10 rtl:pr-10" />
+                      </div>
+                      <input-error :message="subtaskForm.errors.title" />
+                    </div>
+                    <div class="mb-4">
+                      <label for="">{{ $t('Deadline') }}</label>
+                      <flat-pickr
+                        class="form-input"
+                        v-model="subtaskForm.due_date"
+                        :config="datepickerOptions" />
+                      <input-error :message="subtaskForm.errors.due_date" />
+                    </div>
+                    <div class="mb-4">
+                      <label for="">{{ $t('assigner') }}</label>
+                      <div class="relative">
+                        <span
+                          class="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 dark:text-white-dark">
+                          <icon-users />
+                        </span>
+                        <multiselect
+                          v-model="subtaskForm.assigner"
+                          :options="assigners"
+                          label="name"
+                          track-by="id"
+                          :option-height="104"
+                          :searchable="true"
+                          placeholder="Select an user to assign">
+                          <template #singleLabel="props">
+                            <div class="flex items-center gap-2">
+                              <img
+                                class="h-8 w-8 rounded-full mr-2"
+                                :src="props.option.avatar"
+                                alt="avatar" />
+                              <span class="option__desc">
+                                <span class="option__title">{{ props.option.name }}</span>
+                              </span>
+                            </div>
+                          </template>
+                          <template #option="props">
+                            <div class="flex gap-2 items-center">
+                              <img
+                                class="h-8 w-8 rounded-full"
+                                :src="props.option.avatar"
+                                alt="avatar" />
+                              <div class="option__desc">
+                                <span class="option__title">{{ props.option.name }}</span>
+                              </div>
+                            </div>
+                          </template>
+                        </multiselect>
+                      </div>
+                    </div>
+                    <div class="mb-4">
+                      <label for="">{{ $t('assignee') }}</label>
+                      <div class="relative">
+                        <span
+                          class="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 dark:text-white-dark">
+                          <icon-users />
+                        </span>
+                        <multiselect
+                          v-model="subtaskForm.assignee"
+                          :options="assignees"
+                          label="name"
+                          track-by="id"
+                          :option-height="104"
+                          :searchable="true"
+                          placeholder="Select an user to assign">
+                          <template #singleLabel="props">
+                            <div class="flex items-center gap-2">
+                              <img
+                                class="h-8 w-8 rounded-full mr-2"
+                                :src="props.option.avatar"
+                                alt="avatar" />
+                              <span class="option__desc">
+                                <span class="option__title">{{ props.option.name }}</span>
+                              </span>
+                            </div>
+                          </template>
+                          <template #option="props">
+                            <div class="flex gap-2 items-center">
+                              <img
+                                class="h-8 w-8 rounded-full"
+                                :src="props.option.avatar"
+                                alt="avatar" />
+                              <div class="option__desc">
+                                <span class="option__title">{{ props.option.name }}</span>
+                              </div>
+                            </div>
+                          </template>
+                        </multiselect>
+                      </div>
+                    </div>
+                    <div class="mb-4">
+                      <label for="">{{ $t('task_description') }}</label>
+                      <ckeditor
+                        :config="options.editorConfig"
+                        v-model="subtaskForm.description"
+                        :editor="options.editor" />
+                      <input-error :message="subtaskForm.errors.description" />
+                    </div>
+                    <div class="flex gap-x-4">
+                      <button
+                        type="button"
+                        class="btn btn-outline-danger w-full"
+                        @click="closeModal">
+                        {{ $t('cancel') }}
+                      </button>
+                      <button type="submit" class="btn btn-primary w-full">
+                        {{ $t('save') }}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </DialogPanel>
+            </TransitionChild>
+          </div>
+        </div>
+      </Dialog>
+    </TransitionRoot>
+    <!-- subtask detail modal -->
+    <TransitionRoot appear :show="isEditSubtask" as="template">
+      <Dialog as="div" @close="isEditSubtask = false" class="relative z-50">
         <TransitionChild
           as="template"
           enter="duration-300 ease-out"
@@ -222,75 +395,18 @@
               leave-from="opacity-100 scale-100"
               leave-to="opacity-0 scale-95">
               <DialogPanel
-                class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-xl text-black dark:text-white-dark">
-                <button
-                  type="button"
-                  class="absolute top-5 ltr:right-5 rtl:left-5 text-white-dark hover:text-dark outline-none"
-                  @click="isAddSubtask = false">
-                  <icon-x />
-                </button>
-                <div
-                  class="text-lg font-semibold ltr:pl-5 rtl:pr-5 py-5 ltr:pr-[50px] rtl:pl-[50px]">
-                  Them cong viec con
-                </div>
-                <div class="p-5">
-                  <form class="space-y-5">
-                    <div class="mb-4">
-                      <label for="">Ten cong viec</label>
-                      <div class="relative">
-                        <span
-                          class="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 dark:text-white-dark">
-                          <icon-pencil-paper />
-                        </span>
-                        <input
-                          type="text"
-                          placeholder="Title"
-                          class="form-input ltr:pl-10 rtl:pr-10" />
-                      </div>
-                    </div>
-                    <div class="mb-4">
-                      <label for="">Giao cho</label>
-                      <div class="relative">
-                        <span
-                          class="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 dark:text-white-dark">
-                          <icon-users />
-                        </span>
-                        <input
-                          type="text"
-                          placeholder="Assign to"
-                          class="form-input ltr:pl-10 rtl:pr-10" />
-                      </div>
-                    </div>
-                    <div class="mb-4">
-                      <label for="">Mo ta cong viec</label>
-                      <textarea class="form-input" placeholder="..."></textarea>
-                    </div>
-                    <div class="mb-4">
-                      <label for="">Thoi han</label>
-                      <flat-pickr class="form-input" :config="datepickerOptions" />
-                    </div>
-                    <div class="flex gap-x-4">
-                      <button
-                        type="button"
-                        class="btn btn-outline-danger w-full"
-                        @click="isAddSubtask = false">
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-primary w-full"
-                        @click="isAddSubtask = false">
-                        Create
-                      </button>
-                    </div>
-                  </form>
-                </div>
+                class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-3xl text-black dark:text-white-dark">
+                <subtask-detail :subtask_id="subtaskId" @close="closeModal" />
               </DialogPanel>
             </TransitionChild>
           </div>
         </div>
       </Dialog>
     </TransitionRoot>
+  </div>
+  <div v-else class="absolute inset-0 flex justify-center items-center">
+    <span
+      class="animate-spin border-4 border-primary border-l-transparent rounded-full w-10 h-10"></span>
   </div>
 </template>
 
@@ -306,12 +422,13 @@ import { onMounted, ref, defineProps, defineEmits } from 'vue';
 import FlatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import TaskSubDetail from './TaskSubDetail.vue';
+import SubtaskDetail from '../Subtask/SubtaskDetail.vue';
 import IconX from '@/Components/icon/icon-x.vue';
 import IconPencilPaper from '@/Components/icon/icon-pencil-paper.vue';
 import IconUsers from '@/Components/icon/icon-users.vue';
 import IconClock from '@/Components/icon/icon-clock.vue';
 import TaskMessage from './TaskMessage.vue';
-import { getTaskDetail, markAsDone, createTaskResult } from '@/services/task.service';
+import { getTaskDetail } from '@/services/task.service';
 import UserInfo from '@/Components/UserInfo.vue';
 import {
   ClassicEditor,
@@ -370,15 +487,18 @@ import {
   TodoList,
   Underline,
   Undo,
-  CKFinderUploadAdapter
+  CKFinderUploadAdapter,
+  logError
 } from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import '@css/ckeditor.css';
-import type { task } from '@/interfaces/index.interfaces';
-import { showMessage } from '@/functions/alert';
+import type { task, user } from '@/interfaces/index.interfaces';
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import FileIcon from '@/Components/FileIcon.vue';
+import Subtask from '@/Components/subtask/SubtaskComponent.vue';
+import Multiselect from '@suadelabs/vue3-multiselect';
+import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
 
 const options = ref({
   editor: ClassicEditor,
@@ -462,15 +582,24 @@ const options = ref({
   }
 });
 
-const taskData = ref<task>();
-const resultDraft = ref('');
-const emits = defineEmits(['close', 'markAsDone', 'scrollToBottom']);
 const props = defineProps({
   taskId: {
     type: Number,
     required: true
+  },
+  assignees: {
+    type: Array as () => user[],
+    required: true
+  },
+  assigners: {
+    type: Array as () => user[],
+    required: true
   }
 });
+
+const taskData = ref<task>();
+const subtaskId = ref<number>(0);
+const emits = defineEmits(['close', 'scrollToBottom']);
 
 const attachmentForm = useForm({
   file: {} as any,
@@ -482,72 +611,183 @@ const scrollToBottom = () => {
 };
 
 const datepickerOptions = ref<any>({
-  dateFormat: 'Y-m-d',
-  position: 'auto left'
+  position: 'auto left',
+  enableTime: true,
+  dateFormat: 'Y-m-d H:i'
 });
 
 const page = usePage();
 const isEditDescription = ref(false);
 const updateTaskResult = ref(false);
 const isAddSubtask = ref(false);
+const isEditSubtask = ref(false);
 const uploadedFiles = ref<Array<{ id: number; name: string }>>([]);
 
-const onStartTask = (data: any) => {
-  console.log('start task', data);
+const taskForm = useForm({
+  title: '',
+  description: '',
+  due_date: '',
+  result: '',
+  status: '',
+  assign_to: null,
+  started_at: '',
+  assignee: {} as any,
+  assigner: {} as any,
+  assignee_id: 0,
+  assigner_id: 0,
+  attachments: [],
+  created_by: 0
+});
+
+const subtaskForm = useForm({
+  title: '',
+  description: '',
+  due_date: '',
+  assign_to: null,
+  created_by: page.props.auth.user.id,
+  task_id: props.taskId,
+  assignee: {} as any,
+  assigner: {} as any,
+  assignee_id: 0,
+  assigner_id: 0
+});
+
+const clearSubtaskForm = () => {
+  subtaskForm.title = '';
+  subtaskForm.description = '';
+  subtaskForm.due_date = '';
+  subtaskForm.assignee = {};
+  subtaskForm.assigner = {};
+  subtaskForm.assignee_id = 0;
+  subtaskForm.assigner_id = 0;
+  subtaskForm.created_by = page.props.auth.user.id;
+  subtaskForm.task_id = props.taskId;
 };
 
-const onMarkAsDone = async () => {
-  await markAsDone(props.taskId).then((response) => {
-    showMessage(response.data.message, response.data.type);
+const startTask = () => {
+  const now = new Date();
+  const formattedTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+    2,
+    '0'
+  )}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(
+    now.getMinutes()
+  ).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+  taskForm.started_at = formattedTimestamp;
+  taskForm.status = 'doing';
+  taskForm.post(route('task.start', props.taskId), {
+    onSuccess: () => {
+      if (taskData.value?.assignee.id === $page.props.auth.user.id) {
+        taskData.value.started_at = formattedTimestamp;
+      }
+      taskForm.status = '';
+    }
   });
-  emits('markAsDone', props.taskId);
 };
 
-const onUpdateResult = async () => {
-  await createTaskResult(props.taskId, taskData.value.result).then((response) => {
-    resultDraft.value = taskData.value.result;
-    showMessage(response.data.message, response.data.type);
+const onMarkAsDone = () => {
+  taskForm.status = 'done';
+  taskForm.post(route('task.mark-as-done', props.taskId), {
+    onSuccess: () => {
+      taskForm.status = '';
+    }
   });
-  updateTaskResult.value = false;
 };
 
-const onCancelUpdatingResult = () => {
-  taskData.value.result = resultDraft.value;
+const updateResult = async () => {
+  if (taskData.value.result && taskData.value.result !== '') {
+    taskForm.result = taskData.value.result;
+    taskForm.patch(route('task.update-result', props.taskId), {
+      onSuccess: () => {
+        updateTaskResult.value = false;
+      }
+    });
+  } else {
+    cancelUpdatingResult();
+  }
+};
+
+const cancelUpdatingResult = () => {
   updateTaskResult.value = false;
+  taskForm.clearErrors();
 };
 
 const uploadAttachment = () => {
   attachmentForm.post(route('task-attachment.upload'), {
     onSuccess: () => {
+      attachmentForm.clearErrors();
       const file = page.props.flash_data.file;
       uploadedFiles.value.push({
         id: file.id,
         name: file.slug
       });
-      console.log('uploaded', file);
     }
   });
 };
 
 const removeAttachment = (fileId: number) => {
-  attachmentForm.file = {};
-  uploadedFiles.value = uploadedFiles.value.filter((file) => file.id !== fileId);
+  attachmentForm.delete(route('task-attachment.delete', fileId), {
+    onSuccess: () => {
+      uploadedFiles.value = uploadedFiles.value.filter((file) => file.id !== fileId);
+      attachmentForm.file = {};
+      attachmentForm.clearErrors();
+    }
+  });
+};
+
+const addSubtask = () => {
+  isAddSubtask.value = true;
+};
+
+const editSubtask = (id: number) => {
+  isEditSubtask.value = true;
+  subtaskId.value = id;
+};
+
+const closeModal = () => {
+  isAddSubtask.value = false;
+  isEditSubtask.value = false;
+  clearSubtaskForm();
+};
+
+const getTaskDetailData = async (taskId: number) => {
+  return await getTaskDetail(taskId).then((response) => {
+    taskData.value = response.data.task;
+    response.data.task.attachments.forEach((file: any) => {
+      uploadedFiles.value.push({
+        id: file.id,
+        name: file.slug
+      });
+    });
+    taskForm.title = response.data.task.title;
+    taskForm.description = response.data.task.description;
+    taskForm.due_date = response.data.task.due_date;
+    taskForm.result = response.data.task.result;
+    taskForm.status = response.data.task.status;
+    taskForm.started_at = response.data.task.started_at;
+    taskForm.assignee_id = response.data.task.assignee_id;
+    taskForm.assigner_id = response.data.task.assigner_id;
+    taskForm.attachments = response.data.task.attachments;
+    taskForm.created_by = response.data.task.assigner_id;
+  });
+};
+
+const saveSubtask = () => {
+  subtaskForm.assignee_id = subtaskForm.assignee.id;
+  subtaskForm.assigner_id = subtaskForm.assigner.id;
+  subtaskForm.post(route('subtask.store'), {
+    onSuccess: () => {
+      isAddSubtask.value = false;
+      getTaskDetailData(props.taskId);
+      clearSubtaskForm();
+    }
+  });
+};
+
+const canPerform = (status: string) => {
+  return ['done', 'closed'].includes(status);
 };
 
 onMounted(async () => {
-  await getTaskDetail(props.taskId)
-    .then((response) => {
-      taskData.value = response.data;
-      resultDraft.value = taskData.value.result;
-      taskData.value.attachments.forEach((file: any) => {
-        uploadedFiles.value.push({
-          id: file.id,
-          name: file.slug
-        });
-      });
-    })
-    .catch(() => {
-      console.log('error');
-    });
+  await getTaskDetailData(props.taskId);
 });
 </script>

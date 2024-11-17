@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('chat_id')->constrained();
             $table->foreignId('sent_by')->constrained(table: 'users', column: 'id');
+            $table->foreignId('sent_to')->nullable()->constrained('users');
+            $table->foreignId('replied_to')->nullable()->constrained('messages');
+            $table->timestamp('edited_at')->nullable();
             $table->text('content');
             $table->softDeletes();
             $table->timestamps();

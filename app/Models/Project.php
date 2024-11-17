@@ -11,11 +11,11 @@ class Project extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title', 'description', 'created_by', 'type', 'team_id'];
+    protected $fillable = ['title', 'description', 'created_by', 'type', 'department_id'];
 
-    public function team()
+    public function department()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class);
     }
 
     public function createdBy()
@@ -29,7 +29,9 @@ class Project extends Model
     }
 
     public function scopeFilter(Builder $query) {
-
+      return $query->when(request('type'), function ($query) {
+        $query->where('type', request('type'));
+      });
     }
 
     public function projectConversations()
@@ -44,5 +46,9 @@ class Project extends Model
 
     public function taskLists() {
         return $this->hasMany(TaskList::class);
+    }
+
+    public function tasks() {
+      return $this->hasMany(Task::class);
     }
 }

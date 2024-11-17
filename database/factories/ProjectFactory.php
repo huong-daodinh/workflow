@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Team;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,13 +18,12 @@ class ProjectFactory extends Factory
      */
     public function definition(): array
     {
-        $type = fake()->randomElement(['P', 'T']); // P for personal, T for team
         return [
             'title' => fake()->text(),
             'description' => fake()->paragraph(),
-            'created_by' => User::inRandomOrder()->first()->id,
-            'type' => $type,
-            'team_id' => $type === 'T' ? Team::factory() : null
+            'created_by' => User::where('role', 'manager')->inRandomOrder()->first()->id,
+            'type' => 'D', // P for personal, D for department
+            'department_id' => Department::factory()
         ];
     }
 }

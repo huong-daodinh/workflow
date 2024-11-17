@@ -34,7 +34,7 @@ class TagSeeder extends Seeder
       ]);
 
       Tag::create([
-        'slug' => 'completed',
+        'slug' => 'done',
         'color' => 'success',
       ]);
 

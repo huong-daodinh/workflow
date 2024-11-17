@@ -19,16 +19,20 @@ class SubTaskFactory extends Factory
     public function definition(): array
     {
         $priority = fake()->randomElement([0, 1, 2, 3]);
-        $assigner = User::inRandomOrder()->first();
+        $assigner = User::where('role', 'manager')->inRandomOrder()->first();
+        $status = fake()->randomElement(['todo', 'doing', 'done', 'closed']);
         return [
-          'title' => fake()->text(),
+          'title' => fake()->text(50),
           'priority' => $priority,
-          'start_date' => fake()->dateTimeBetween('-2 month', '+1 month'),
-          'due_date' => fake()->dateTimeBetween('+1 month', '+2 month'),
-          'status' => fake()->randomElement(['todo', 'in_progress', 'done']),
-          'description' => fake()->paragraph(),
+          'started_at' => $status !== 'todo' ? fake()->dateTimeBetween('-1 month', 'now') : null,
+          'due_date' => fake()->dateTimeBetween('-1 week', '+1 week'),
+          'status' => $status,
+          'description' => fake()->paragraph(10),
           'assigner_id' => $assigner->id,
-          'assignee_id' => User::whereNot('id', $assigner->id)->inRandomOrder()->first()->id,
+          'assignee_id' => User::whereNot('id', $assigner->id)
+                          ->where('department_id', $assigner->department_id)
+                          ->where('role', 'member')
+                          ->inRandomOrder()->first()->id,
           'task_id' => Task::factory(),
           'created_by' => $assigner->id
         ];

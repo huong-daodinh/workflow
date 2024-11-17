@@ -16,6 +16,7 @@ export interface user {
   created_at: string;
   updated_at: string;
   phone: string;
+  role: string;
 }
 
 export interface tag {
@@ -46,6 +47,7 @@ export interface task {
   attachments: attachment[];
   sub_tasks: subTask[];
   tags: tag[];
+  followers: user[];
 }
 
 export interface subTask {
@@ -60,7 +62,12 @@ export interface subTask {
   created_by: user;
   created_at: string;
   updated_at: string;
+  started_at: string;
+  result: string;
+  attachments: attachment[];
+  sub_tasks: subTask[];
   tags: tag[];
+  followers: user[];
 }
 
 export interface task_list {
@@ -79,6 +86,7 @@ export interface project {
   created_by: user;
   type: string;
   task_lists: task_list[];
+  attachments: attachment[];
 }
 
 export interface task_message {

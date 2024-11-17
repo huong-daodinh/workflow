@@ -5,7 +5,15 @@ WORKDIR /var/www/html
 
 # Install Additional dependencies
 # Install Additional dependencies
-RUN apk update && apk add --no-cache supervisor
+RUN apk update && apk add --no-cache \
+  curl \
+  bash \
+  nodejs \
+  npm \
+  supervisor
+
+# Install Yarn
+RUN npm install -g yarn
 
 # Add and Enable PHP-PDO Extenstions for PHP connect Mysql
 RUN docker-php-ext-install pdo pdo_mysql
@@ -33,9 +41,14 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 ENV ENABLE_CRONTAB 1
 ENV ENABLE_HORIZON 0
+ENV ENABLE_WORKER 1
 
-RUN echo "* * * * * php /app/artisan schedule:run >> /dev/null 2>&1" >> /etc/crontabs/root
-RUN echo "* * * * * php /app/artisan queue:work >> /dev/null 2>&1" >> /etc/crontabs/root
+# RUN echo "* * * * * php /app/artisan schedule:run >> /dev/null 2>&1" >> /etc/crontabs/root
+# RUN echo "* * * * * php /app/artisan queue:work >> /dev/null 2>&1" >> /etc/crontabs/root
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 
 ENTRYPOINT ["sh", "/var/www/html/.docker/docker-entrypoint.sh"]
 

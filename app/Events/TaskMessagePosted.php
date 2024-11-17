@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Task;
+use App\Models\TaskMessage;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -18,7 +18,7 @@ class TaskMessagePosted implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public Task $task)
+    public function __construct(public TaskMessage $message)
     {
         //
     }
@@ -28,15 +28,15 @@ class TaskMessagePosted implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PresenceChannel('TaskConversation.'.$this->task->id),
-        ];
+        return [new PresenceChannel('task.' . $this->message->task_id)];
     }
 
-    public function broadcastAs(): string
-    {
-        return 'message-posted';
-    }
+    public function broadcastWith(): array
+{
+    return [
+        'message' => $this->message,
+    ];
+}
 }

@@ -105,6 +105,19 @@ const submit = () => {
                   Sign in
                 </button>
               </form>
+              <div class="relative my-7 text-center md:mb-9">
+                <span
+                  class="absolute inset-x-0 top-1/2 h-px w-full -translate-y-1/2 bg-white-light dark:bg-white-dark"></span>
+                <span
+                  class="relative bg-white px-2 font-bold uppercase text-white-dark dark:bg-dark dark:text-white-light">
+                  or
+                </span>
+              </div>
+              <Link
+                :href="route('register')"
+                class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                Register new account
+              </Link>
             </div>
           </div>
         </div>

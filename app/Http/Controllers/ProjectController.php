@@ -6,6 +6,8 @@ use App\Http\Requests\ProjectRequest;
 use App\Http\Services\ProjectService;
 use App\Models\Project;
 use App\Models\ProjectAttachment;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -74,8 +76,12 @@ class ProjectController extends Controller
             'taskLists.tasks.tags'
           ]
         );
+        $availableAssigners = User::where([['role', '=', 'manager'], ['department_id', '=', $project->department_id]])->get();
+        $availableAssignees = User::where([['role', '=', 'member'], ['department_id', '=', $project->department_id]])->get();
         return Inertia::render('Project/ProjectDetail', [
-            'project' => $project
+            'project' => $project,
+            'assignees' => $availableAssignees,
+            'assigners' => $availableAssigners
         ]);
     }
 
@@ -101,5 +107,46 @@ class ProjectController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function analyze($id) {
+      $project = Project::findOrFail($id);
+      $project->load('taskLists');
+      $taskLists = $project->taskLists;
+      $taskListIds = $taskLists->pluck('id');
+      $tasksByStatus = [];
+      $tasks = Task::where(function ($query) use ($id, $taskListIds) {
+            $query->where('project_id', $id)
+                  ->orWhereIn('task_list_id', $taskListIds);
+      })->orderBy('created_at', 'desc')->get();
+
+        $totalTasks = $tasks->count();
+        $recentTasks = $tasks->take(5);
+        foreach($recentTasks as $task) {
+          $task->load('assigner', 'assignee');
+        }
+        $statuses = [
+            'doing' => ['color' => 'blue'],
+            'pending' => ['color' => 'sky'],
+            'overdue' => ['color' => 'red'],
+            'done' => ['color' => 'green']
+        ];
+
+        foreach ($statuses as $slug => $details) {
+            $task = $tasks->filter(function ($task) use ($slug, $details) {
+              return $task->tags->contains('slug', $slug) && (!isset($details['status']) || $task->status == $details['status']);
+            });
+            $tasksByStatus[$slug] = [
+              'count' => $task->count(),
+              'color' => $details['color'],
+              'slug' => $slug,
+                'rate' => $totalTasks > 0 ? round(($task->count() / $totalTasks) * 100, 2) : 0
+            ];
+        }
+        return response()->json([
+        'tasksByStatus' => $tasksByStatus,
+        'recentTasks' => $recentTasks,
+        'totalTasks' => $totalTasks
+      ]);
     }
 }

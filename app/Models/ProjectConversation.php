@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProjectConversation extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['project_id', 'content', 'sent_by', 'reply_to'];
-    protected $table = ['project_conversation'];
+    protected $fillable = ['project_id', 'content', 'sent_by', 'reply_to', 'edited_at'];
+    protected $table = ['project_messages'];
 
     public function project()
     {

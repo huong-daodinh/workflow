@@ -20,18 +20,22 @@ class SubTask extends Model
       'due_date',
       'description',
       'assignee_id',
-      'start_date',
-      'due_date'
+      'started_at',
+      'due_date',
+      'result'
     ];
 
     protected $table = 'subtasks';
 
-    public function assignee()
-    {
-        return $this->belongsTo(User::class, 'assignee_id');
+    public function tags() {
+      return $this->belongsToMany(Tag::class, 'subtasks_tags', 'subtask_id', 'tag_id');
     }
 
-    public function tags() {
-      return $this->hasManyThrough(Tag::class, SubtaskTag::class, 'subtask_id', 'id', 'id', 'tag_id');
+    public function assignee() {
+      return $this->belongsTo(User::class, 'assignee_id');
+    }
+
+    public function assigner() {
+      return $this->belongsTo(User::class, 'assigner_id');
     }
 }

@@ -9,12 +9,7 @@ class ProjectRepository {
     public function getAllProjects() {
         $authUser = Auth::user();
         $projects = Project::filter()->where([['type', '=', 'P'], ['created_by', '=', $authUser->id]])
-        ->orWhere(function ($query) use($authUser) {
-            $query->where('type', 'T')
-                  ->whereIn('team_id', function($query) use($authUser) {
-                    $query->select('team_id')->from('team_members')->where('member_id', $authUser->id);
-                  });
-        })->get();
+        ->orWhere('department_id', $authUser->department_id)->get();
         foreach($projects as $project) {
             $project->load('createdBy');
         }

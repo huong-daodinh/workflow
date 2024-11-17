@@ -31,14 +31,37 @@ task
 thong bao: nhac ten, nhac trang thai cong viec cho ng theo doi, trang thai de xuat
 
 7-11-24
- - sua lai giao dien project detail de responsive
- - task attachment
+ - sua lai giao dien project detail de responsive - done
+ - task attachment - done
  - task followers
  - drag and drop tasks
  - mention: done fe
- - update task results
+ - update task results - done
  - mark completed -> send mail to followers -> show close task button -> if not satisfied -> mark doing
- - project sub_detail
- - project detail list view, board view
+ - project sub_detail - done
+ - project detail list view, board view - done list view,
 
 
+Dang ky moi: van duoc dang nhap vao, nhung chi co the su dung duoc chat. Ko the cham cong.
+Bao gio admin approve thi moi truong phong hoac admin moi co the them vao phong ban
+
+project attachments
+Thong ke - important
+
+Ca nhan
+- so task duoc giao: donut
+- ty le hoan thanh task
+- so task toi tao
+- so task hoan thanh
+- so task dang lam
+- so task hoan thanh muon
+
+Du an:
+- so task duoc tao
+- so task hoan thanh
+- so task dang lam, cho duyet, hoan thanh, hoan thanh muon, qua hoan
+-
+
+-----------------
+docker max upload
+update task bug
