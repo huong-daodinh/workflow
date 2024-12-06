@@ -6,6 +6,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Http\Services\ProjectService;
 use App\Models\Project;
 use App\Models\ProjectAttachment;
+use App\Models\Tag;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -78,10 +79,12 @@ class ProjectController extends Controller
         );
         $availableAssigners = User::where([['role', '=', 'manager'], ['department_id', '=', $project->department_id]])->get();
         $availableAssignees = User::where([['role', '=', 'member'], ['department_id', '=', $project->department_id]])->get();
+        $tags = Tag::whereIn('slug', ['important', 'urgent'])->get();
         return Inertia::render('Project/ProjectDetail', [
             'project' => $project,
             'assignees' => $availableAssignees,
-            'assigners' => $availableAssigners
+            'assigners' => $availableAssigners,
+            'tags' => $tags
         ]);
     }
 

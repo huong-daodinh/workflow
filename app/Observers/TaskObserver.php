@@ -14,7 +14,7 @@ class TaskObserver
     public function created(Task $task): void
     {
       $pendingTag = Tag::where('slug', 'pending')->first();
-      $task->tags()->sync($pendingTag->id);
+      $task->tags()->attach($pendingTag->id);
     }
 
     /**
@@ -28,27 +28,30 @@ class TaskObserver
         $doingTag = Tag::where('slug', 'doing')->first();
         $doneTag = Tag::where('slug', 'done')->first();
         $pendingTag = Tag::where('slug', 'pending')->first();
+        $closedTag = Tag::where('slug', 'closed')->first();
+        $readyReviewTag = Tag::where('slug', 'ready_to_review')->first();
+        if ($now > $task->due_date) {
+          $task->tags()->attach($overdueTag->id);
+        }
         if ($task->isDirty('status')) {
           if ($task->status === 'todo') {
-            if ($now > $task->due_date) {
-                $task->tags()->sync($overdueTag->id);
-            }
-            $task->tags()->sync($pendingTag->id);
+        $task->tags()->attach($pendingTag->id);
           }
           else if ($task->status === 'doing') {
-            if ($now > $task->due_date) {
-              $task->tags()->sync($overdueTag->id);
-            }
-              $task->tags()->sync($doingTag->id);
-              $task->tags()->detach($pendingTag->id);
+        $task->tags()->attach($doingTag->id);
+            $task->tags()->detach($pendingTag->id);
           }
           else if ($task->status === 'done') {
             if ($now > $task->due_date) {
-              $task->tags()->sync($overdueCompletedTag->id);
+              $task->tags()->attach($overdueCompletedTag->id);
             } else {
-              $task->tags()->sync($doneTag->id);
+              $task->tags()->attach($doneTag->id);
             }
             $task->tags()->detach($doingTag->id);
+            $task->tags()->attach($readyReviewTag->id);
+          } else if ($task->status === 'closed') {
+            $task->tags()->attach($closedTag->id);
+            $task->tags()->detach($readyReviewTag->id);
           }
         }
     }

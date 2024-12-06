@@ -25,9 +25,7 @@
         </div>
         <div class="flex-1">
           <span class="text-dark font-bold">{{ message.sent_by.name }}</span>
-          <p class="media-text mb-4">
-            {{ message.content }}
-          </p>
+          <p class="media-text mb-4" v-html="message.content"></p>
           <ul class="flex space-x-4 rtl:space-x-reverse font-bold">
             <li>
               <a href="javascript:;" class="flex items-center hover:text-primary">
@@ -57,7 +55,7 @@
           <Mentionable
             placement="top"
             :keys="['@']"
-            :items="users"
+            :items="mentionData"
             offset="6"
             insert-space
             @open="canSendMessage = false"
@@ -66,7 +64,7 @@
               @keyup.enter="handleEnterKey"
               v-model="messageInput"
               class="form-input border-0 bg-[#f4f4f4] pr-12 focus:outline-none py-2"
-              placeholder="Type a message" />
+              placeholder="Type a message (@ to mention)" />
 
             <template #no-result>
               <div class="dim">No result</div>
@@ -74,8 +72,8 @@
 
             <template #item-@="{ item }" class="cursor-pointer">
               <div class="user">
-                {{ item.value }}
-                <span class="dim"> ({{ item.firstName }}) </span>
+                #{{ item.id }}
+                <span class="dim"> ({{ item.value }}) </span>
               </div>
             </template>
           </Mentionable>
@@ -96,53 +94,35 @@ import IconSend from '@/Components/icon/icon-send.vue';
 import IconMessageDots from '@/Components/icon/icon-message-dots.vue';
 import IconEdit from '@/Components/icon/icon-edit.vue';
 import IconTrash from '@/Components/icon/icon-trash.vue';
-import { defineProps, onMounted, ref, defineEmits, onBeforeUnmount } from 'vue';
-import type { task_message } from '@/interfaces/index.interfaces';
+import { defineProps, onMounted, ref, defineEmits, onBeforeUnmount, computed } from 'vue';
+import type { task_message, user } from '@/interfaces/index.interfaces';
 import { getTaskMessages } from '@/services/task.service';
 import { sendTaskMessage } from '@/services/task.service';
 import { Mentionable } from 'vue-mention';
 // import Echo from 'laravel-echo';
 const canSendMessage = ref(true);
 
-const newMessageReceived = ref(false);
 const emits = defineEmits(['messageSent']);
 const props = defineProps({
   taskId: {
     type: Number,
     required: true
+  },
+  users: {
+    type: [] as Array<user>,
+    required: false
   }
 });
 
-const users = [
-  {
-    value: 'akryum',
-    firstName: 'Guillaume'
-  },
-  {
-    value: 'posva',
-    firstName: 'Eduardo'
-  },
-  {
-    value: 'atinux',
-    firstName: 'Sébastien'
-  },
-  {
-    value: 'atinux2',
-    firstName: 'Sébastien2'
-  },
-  {
-    value: 'atinux3',
-    firstName: 'Sébastien3'
-  },
-  {
-    value: 'atinux4',
-    firstName: 'Sébastien4'
-  },
-  {
-    value: 'atinux5',
-    firstName: 'Sébastien5'
-  }
-];
+const mentionData = computed(() => {
+  return props.users.map((user: user) => {
+    return {
+      id: user.id,
+      value: user.id,
+      name: user.name
+    };
+  });
+});
 
 const onCloseMention = () => {
   setTimeout(() => {

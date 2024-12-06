@@ -135,5 +135,6 @@
   "start": "Start",
   "assigner": "Assigner",
   "response": "Response",
-  "delete": "Delete"
+  "delete": "Delete",
+  "error_message_sent": "Can not send message"
 }

@@ -15,7 +15,6 @@ node_modules
 .dockerignore
 Dockerfile
 docker-compose.yml
-.docker/*
 !.docker/supervisor*
 !.docker/php
 !.docker/docker-entrypoint.sh

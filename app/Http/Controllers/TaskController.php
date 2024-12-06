@@ -37,7 +37,24 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+          'title' => 'required|string|min:5|max:255',
+          'priority' => 'nullable|string',
+          'description' => 'required|string',
+          'status' => 'nullable|string',
+          'created_by' => 'required|integer|exists:users,id',
+          'assigner_id' => 'required|integer|exists:users,id',
+          'due_date' => 'required|date',
+          'assignee_id' => 'required|integer|exists:users,id',
+          'tags' => 'nullable|array',
+          'tags.*' => 'integer|exists:tags,id',
+          'project_id' => 'required|integer|exists:projects,id',
+          'task_list_id' => 'nullable|integer|exists:task_lists,id',
+        ]);
+        $task = Task::create($data);
+        $task->tags()->sync($data['tags']);
+        $task->followers()->sync([$data['assigner_id'], $data['assignee_id']]);
+        Session::flash('flash', ['type' => 'success', 'message' => 'Task created']);
     }
 
     /**
@@ -55,7 +72,13 @@ class TaskController extends Controller
           'followers',
           'attachments',
         ]);
-        return response()->json(['task' => $task]);
+        $nonFollowers = User::whereDoesntHave('tasks', function ($query) use ($task) {
+          $query->where('task_id', $task->id);
+        })->get();
+        return response()->json([
+          'task' => $task,
+          'nonFollowers' => $nonFollowers,
+        ]);
     }
 
     /**
@@ -168,19 +191,24 @@ class TaskController extends Controller
 
     public function closeTask($id) {
         $task = Task::findOrFail($id);
-        $response = Gate::inspect('process-task', $task);
+        $response = Gate::inspect('process', $task);
         if ($response->allowed()) {
           $task->update(['status' => 'closed']);
           Session::flash('flash', ['type' => 'success', 'message' => 'Task closed']);
+        } else {
+          Session::flash('flash', ['type' => 'error', 'message' => 'Không thể thực hiện']);
+
         }
     }
 
     public function rejectTask($id) {
         $task = Task::findOrFail($id);
-        $response = Gate::inspect('process-task', $task);
+        $response = Gate::inspect('process', $task);
         if ($response->allowed()) {
-          $task->update(['status' => 'todo']);
+          $task->update(['status' => 'doing']);
           Session::flash('flash', ['type' => 'success', 'message' => 'Task rejected']);
+        } else {
+          Session::flash('flash', ['type'=> 'error', 'message' => 'Không thể thực hiện']);
         }
 
     }
@@ -193,6 +221,23 @@ class TaskController extends Controller
         ]);
         $task->update($validated);
         Session::flash('flash', ['type' => 'success', 'message' => 'Task updated']);
+      } catch (\Exception $e) {
+        Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+      }
+    }
+
+    public function addFollowers(Request $request, $task) {
+
+      try {
+        $task = Task::findOrFail($task);
+        $data = $request->validate([
+          'followers' => 'required|array',
+          'followers.*' => 'integer|exists:users,id',
+        ]);
+        foreach($data['followers'] as $follower) {
+          $task->followers()->attach($follower);
+        }
+        Session::flash('flash', ['type' => 'success', 'message' => 'Followers added']);
       } catch (\Exception $e) {
         Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
       }

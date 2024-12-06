@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Events\TaskMessagePosted;
 use App\Models\Task;
 use App\Models\TaskMessage;
+use App\Parsers\CustomMentionParser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class TaskConversationController extends Controller
 {
@@ -19,6 +21,17 @@ class TaskConversationController extends Controller
           'content' => $request->message
         ];
         $message = TaskMessage::create($data);
+        $parser = new CustomMentionParser($message, [
+          'pool' => 'users',
+          'notify' => false,
+          'regex_replacement' => [
+              '{character}' => '@',
+              '{pattern}' => '[A-Za-z0-9]',
+              '{rules}' => '{1,20}'
+            ]
+        ]);
+        $message->content = $parser->parse($message->content);
+        $message->save();
         $message->load('sentBy');
         broadcast(new TaskMessagePosted($message))->toOthers();
         return response()->json(['message' => $message]);

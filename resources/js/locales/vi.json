@@ -125,5 +125,19 @@
   "start": "Bắt đầu",
   "assigner": "Người giao việc",
   "response": "Trả lời",
-  "delete": "Xóa"
+  "delete": "Xóa",
+  "error_message_sent": "Có lỗi xảy ra: tin nhắn không gửi được",
+  "members": "Thành viên",
+  "suppervisor": "Người giám sát",
+  "assignee": "Người được giao việc",
+  "doer": "Người thực hiện",
+  "cancel": "Hủy",
+  "save": "Lưu",
+  "create_new_task": "Tạo công việc mới",
+  "update_task_list": "Cập nhật danh sách",
+  "del_task_list": "Xóa danh sách",
+  "sure_del_task_list": "Bạn có chắc chắn muốn xóa danh sách công việc này?",
+  "title": "Tiêu đề",
+  "add_tags": "Thêm thẻ",
+  "ready_to_review": "Sẵn sàng nghiệm thu"
 }

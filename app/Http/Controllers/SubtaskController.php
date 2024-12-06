@@ -88,7 +88,7 @@ class SubtaskController extends Controller
           $subtask->update(['status' => $request->status]);
           Session::flash('flash', ['type' => 'success', 'message' => 'Subtask updated']);
         } else {
-          throw new \Exception('Bạn không thể thực hiện hành động này');
+          throw new \Exception('Bạn không phải người thực hiện');
         }
       }catch (\Exception $e) {
         Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);

@@ -6,7 +6,12 @@
       [`text-white bg-warning`]: color === 'warning',
       [`text-white bg-danger`]: color === 'danger',
       [`text-white bg-info`]: color === 'info',
-      [`text-white bg-success`]: color === 'success'
+      [`text-white bg-success`]: color === 'success',
+      [`text-white bg-primary`]: color === 'primary',
+      [`text-white bg-secondary`]: color === 'secondary',
+      [`text-white bg-light`]: color === 'light',
+      [`text-white bg-dark`]: color === 'dark',
+      [`text-white bg-white`]: color === 'white'
     }">
     {{ $t(`${slug}`) }}
   </span>

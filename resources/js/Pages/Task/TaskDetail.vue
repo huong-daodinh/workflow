@@ -17,10 +17,9 @@
             </div>
             <div>
               <p class="text-[#888ea8] mb-5">
-                <span>
-                  {{ taskData.status }}
+                <span class="uppercase font-bold">
+                  {{ $t(`${taskData.status}`) }}
                 </span>
-                {{ $t('in_project') }}
               </p>
               <div class="flex mb-5 gap-x-8">
                 <div class="text-sm font-bold" v-if="taskData.started_at">
@@ -37,6 +36,14 @@
                 </div>
               </div>
             </div>
+            <div
+              class="relative inline-flex align-middle my-2 gap-5"
+              v-if="taskData.status === 'done'">
+              <button type="button" @click="onApproveTask()" class="btn btn-success">
+                Chấp nhận
+              </button>
+              <button type="button" @click="onRejectTask()" class="btn btn-danger">Từ chối</button>
+            </div>
             <div class="mb-5 flex gap-x-10">
               <div>
                 <button
@@ -50,7 +57,7 @@
                 <tippy target="hover" trigger="mouseenter">{{ $t('click_to_mark_done') }}</tippy>
               </div>
               <div class="flex-1">
-                <div>{{ $t('assigner') }}:</div>
+                <div>{{ $t('assigner') }} | {{ $t('suppervisor') }}:</div>
                 <user-info :userData="taskData.assigner" />
               </div>
             </div>
@@ -192,6 +199,7 @@
               <!-- show messages -->
               <task-message
                 :taskId="taskData.id"
+                :users="taskData.followers"
                 v-if="taskData.id"
                 @message-sent="scrollToBottom()" />
             </div>
@@ -199,7 +207,7 @@
         </div>
       </div>
       <div class="col-span-1">
-        <task-sub-detail :task="taskData" />
+        <task-sub-detail :task="taskData" :non-followers="nonFollowers" />
       </div>
     </div>
     <!-- Subtask Modal -->
@@ -236,7 +244,7 @@
                 </button>
                 <div
                   class="text-lg font-semibold ltr:pl-5 rtl:pr-5 py-5 ltr:pr-[50px] rtl:pl-[50px]">
-                  {{ 'Add Subtask' }}
+                  Thêm nhiệm vụ con
                 </div>
                 <div class="p-5">
                   <form class="space-y-5" @submit.prevent="saveSubtask">
@@ -420,7 +428,6 @@ import {
 } from '@headlessui/vue';
 import { onMounted, ref, defineProps, defineEmits } from 'vue';
 import FlatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
 import TaskSubDetail from './TaskSubDetail.vue';
 import SubtaskDetail from '../Subtask/SubtaskDetail.vue';
 import IconX from '@/Components/icon/icon-x.vue';
@@ -430,157 +437,15 @@ import IconClock from '@/Components/icon/icon-clock.vue';
 import TaskMessage from './TaskMessage.vue';
 import { getTaskDetail } from '@/services/task.service';
 import UserInfo from '@/Components/UserInfo.vue';
-import {
-  ClassicEditor,
-  AccessibilityHelp,
-  Autoformat,
-  AutoImage,
-  AutoLink,
-  Autosave,
-  BalloonToolbar,
-  BlockQuote,
-  Bold,
-  CloudServices,
-  Code,
-  CodeBlock,
-  Essentials,
-  FindAndReplace,
-  Heading,
-  Highlight,
-  HorizontalLine,
-  HtmlEmbed,
-  ImageBlock,
-  ImageCaption,
-  ImageInline,
-  ImageInsert,
-  ImageInsertViaUrl,
-  ImageResize,
-  ImageStyle,
-  ImageTextAlternative,
-  ImageUpload,
-  Indent,
-  IndentBlock,
-  Italic,
-  Link,
-  LinkImage,
-  List,
-  ListProperties,
-  MediaEmbed,
-  Mention,
-  Paragraph,
-  PasteFromOffice,
-  PictureEditing,
-  SelectAll,
-  SpecialCharacters,
-  SpecialCharactersArrows,
-  SpecialCharactersCurrency,
-  SpecialCharactersEssentials,
-  SpecialCharactersLatin,
-  SpecialCharactersMathematical,
-  SpecialCharactersText,
-  Strikethrough,
-  Table,
-  TableCellProperties,
-  TableProperties,
-  TableToolbar,
-  TextTransformation,
-  TodoList,
-  Underline,
-  Undo,
-  CKFinderUploadAdapter,
-  logError
-} from 'ckeditor5';
-import 'ckeditor5/ckeditor5.css';
-import '@css/ckeditor.css';
 import type { task, user } from '@/interfaces/index.interfaces';
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import FileIcon from '@/Components/FileIcon.vue';
 import Subtask from '@/Components/subtask/SubtaskComponent.vue';
 import Multiselect from '@suadelabs/vue3-multiselect';
-import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
+import { editorConfig } from '@/Components/plugins/ckeditor';
 
-const options = ref({
-  editor: ClassicEditor,
-  editorConfig: {
-    plugins: [
-      AccessibilityHelp,
-      Autoformat,
-      AutoImage,
-      AutoLink,
-      Autosave,
-      BalloonToolbar,
-      BlockQuote,
-      Bold,
-      CloudServices,
-      Code,
-      CodeBlock,
-      Essentials,
-      FindAndReplace,
-      Heading,
-      Highlight,
-      HorizontalLine,
-      HtmlEmbed,
-      ImageBlock,
-      ImageCaption,
-      ImageInline,
-      ImageInsert,
-      ImageInsertViaUrl,
-      ImageResize,
-      ImageStyle,
-      ImageTextAlternative,
-      ImageUpload,
-      Indent,
-      IndentBlock,
-      Italic,
-      Link,
-      LinkImage,
-      List,
-      ListProperties,
-      MediaEmbed,
-      Mention,
-      Paragraph,
-      PasteFromOffice,
-      PictureEditing,
-      SelectAll,
-      SpecialCharacters,
-      SpecialCharactersArrows,
-      SpecialCharactersCurrency,
-      SpecialCharactersEssentials,
-      SpecialCharactersLatin,
-      SpecialCharactersMathematical,
-      SpecialCharactersText,
-      Strikethrough,
-      Table,
-      TableCellProperties,
-      TableProperties,
-      TableToolbar,
-      TextTransformation,
-      TodoList,
-      Underline,
-      Undo,
-      CKFinderUploadAdapter
-    ],
-    toolbar: [
-      'undo',
-      'redo',
-      '|',
-      'bold',
-      'italic',
-      'underline',
-      '|',
-      'link',
-      'highlight',
-      'blockQuote',
-      'codeBlock',
-      '|',
-      'numberedList',
-      'todoList',
-      'outdent',
-      'indent'
-    ]
-  }
-});
+const options = ref(editorConfig);
 
 const props = defineProps({
   taskId: {
@@ -598,6 +463,7 @@ const props = defineProps({
 });
 
 const taskData = ref<task>();
+const nonFollowers = ref<user[]>([]);
 const subtaskId = ref<number>(0);
 const emits = defineEmits(['close', 'scrollToBottom']);
 
@@ -653,13 +519,7 @@ const subtaskForm = useForm({
 });
 
 const clearSubtaskForm = () => {
-  subtaskForm.title = '';
-  subtaskForm.description = '';
-  subtaskForm.due_date = '';
-  subtaskForm.assignee = {};
-  subtaskForm.assigner = {};
-  subtaskForm.assignee_id = 0;
-  subtaskForm.assigner_id = 0;
+  subtaskForm.reset();
   subtaskForm.created_by = page.props.auth.user.id;
   subtaskForm.task_id = props.taskId;
 };
@@ -676,10 +536,10 @@ const startTask = () => {
   taskForm.status = 'doing';
   taskForm.post(route('task.start', props.taskId), {
     onSuccess: () => {
-      if (taskData.value?.assignee.id === $page.props.auth.user.id) {
+      if (taskForm.assignee_id === page.props.auth.user.id) {
         taskData.value.started_at = formattedTimestamp;
+        taskForm.status = '';
       }
-      taskForm.status = '';
     }
   });
 };
@@ -696,7 +556,7 @@ const onMarkAsDone = () => {
 const updateResult = async () => {
   if (taskData.value.result && taskData.value.result !== '') {
     taskForm.result = taskData.value.result;
-    taskForm.patch(route('task.update-result', props.taskId), {
+    taskForm.post(route('task.update-result', props.taskId), {
       onSuccess: () => {
         updateTaskResult.value = false;
       }
@@ -751,6 +611,7 @@ const closeModal = () => {
 
 const getTaskDetailData = async (taskId: number) => {
   return await getTaskDetail(taskId).then((response) => {
+    nonFollowers.value = response.data.nonFollowers;
     taskData.value = response.data.task;
     response.data.task.attachments.forEach((file: any) => {
       uploadedFiles.value.push({
@@ -779,6 +640,22 @@ const saveSubtask = () => {
       isAddSubtask.value = false;
       getTaskDetailData(props.taskId);
       clearSubtaskForm();
+    }
+  });
+};
+
+const onApproveTask = () => {
+  taskForm.post(route('task.close', props.taskId), {
+    onSuccess: () => {
+      getTaskDetailData(props.taskId);
+    }
+  });
+};
+
+const onRejectTask = () => {
+  taskForm.post(route('task.reject', props.taskId), {
+    onSuccess: () => {
+      getTaskDetailData(props.taskId);
     }
   });
 };

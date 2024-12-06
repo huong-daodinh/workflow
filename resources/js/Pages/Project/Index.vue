@@ -369,12 +369,7 @@ const saveProject = () => {
 
 const clearForm = () => {
   isAddProjectModal.value = false;
-  form.reset('description');
-  form.reset('title');
-  form.reset('files');
-  form.reset('type');
-  form.reset('team_id');
-  form.reset('files');
+  form.reset();
   form.clearErrors();
   attachmentForm.clearErrors();
   uploadedFiles.value = [];

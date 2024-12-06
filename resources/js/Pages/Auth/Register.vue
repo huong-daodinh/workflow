@@ -59,12 +59,11 @@ const submit = () => {
                   <input-error :message="form.errors.email" class="mt-2" />
                 </div>
                 <div>
-                  <label for="Password">Name</label>
+                  <label for="name">Name</label>
                   <div class="relative text-white-dark">
                     <input
-                      id="Password"
+                      id="name"
                       v-model="form.name"
-                      type="password"
                       placeholder="Enter Your Full Name"
                       class="form-input ps-10 placeholder:text-white-dark" />
                     <span class="absolute start-4 top-1/2 -translate-y-1/2">

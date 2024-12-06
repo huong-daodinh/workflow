@@ -17,6 +17,11 @@ import Popper from 'vue3-popper';
 import { CkeditorPlugin } from '@ckeditor/ckeditor5-vue';
 import FloatingVue from 'floating-vue';
 import 'floating-vue/dist/style.css';
+import 'ckeditor5/ckeditor5.css';
+import '@css/ckeditor.css';
+import 'flatpickr/dist/flatpickr.css';
+import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
+
 // import myApp from './App.vue';
 const appName = import.meta.env.VITE_APP_NAME || 'Work Flow';
 const pinia = createPinia();

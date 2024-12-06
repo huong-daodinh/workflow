@@ -48,5 +48,14 @@ class TagSeeder extends Seeder
         'color' => 'info',
       ]);
 
+      Tag::create([
+        'slug'=> 'ready_to_review',
+        'color'=> 'success',
+      ]);
+
+      Tag::create([
+        'slug'=> 'closed',
+        'color'=> 'secondary',
+      ])
     }
 }

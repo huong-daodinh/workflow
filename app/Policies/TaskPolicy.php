@@ -78,7 +78,6 @@ class TaskPolicy
 
     public function process(User $user, Task $task)
     {
-        return ($user->role === 'admin' || ($user->role === 'manager' && $task->assigner_id === $user->id))
-                && $task->status === 'done';
+        return ($user->role === 'admin' || ($user->role === 'manager' && $task->assigner_id === $user->id));
     }
 }
