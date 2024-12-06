@@ -27,6 +27,10 @@ Broadcast::channel('room.{room}', function ($user, $room) {
   return $user;
 });
 
+Broadcast::channel('member.{member}', function ($user, $id) {
+  return $user;
+});
+
 Broadcast::channel('Chat.{chatId}', function ($user, $chatId) {
     return $user->chats()->find($chatId);
 });

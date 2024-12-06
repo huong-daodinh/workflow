@@ -30,7 +30,7 @@
             <input
               type="text"
               class="form-input peer ltr:pr-9 rtl:pl-9"
-              v-model="searchRoom"
+              v-model="search"
               @input="debounceGetRooms"
               placeholder="Search conversations" />
             <div
@@ -77,8 +77,20 @@
                   <div class="font-semibold whitespace-nowrap text-xs">
                     <p>{{ room.time }}</p>
                   </div>
+                  <span
+                    class="badge bg-danger"
+                    v-if="selectedRoom && selectedRoom.id !== room.id && room.unseen_messages > 0">
+                    {{ room.unseen_messages }}
+                  </span>
                 </button>
               </div>
+            </div>
+            <div class="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
+              <button class="btn btn-primary w-full" type="button" @click="addEditTask()">
+                <icon-plus class="ltr:mr-2 rtl:ml-2 shrink-0" />
+
+                Tạo nhóm trò chuyện
+              </button>
             </div>
           </div>
         </div>
@@ -122,7 +134,9 @@
                     <img
                       :src="selectedRoom.avatar"
                       class="rounded-full w-10 h-10 sm:h-12 sm:w-12 object-cover" />
-                    <div class="absolute bottom-0 ltr:right-0 rtl:left-0">
+                    <div
+                      class="absolute bottom-0 ltr:right-0 rtl:left-0"
+                      v-if="selectedRoom.active">
                       <div class="w-4 h-4 bg-success rounded-full"></div>
                     </div>
                   </div>
@@ -161,7 +175,7 @@
                     <div v-for="(message, index) in selectedRoom.messages" :key="index">
                       <div
                         class="flex items-start gap-3"
-                        :class="{ 'justify-end': message.fromUserId.sent_by.id === authUser.id }">
+                        :class="{ 'justify-end': message.sent_by.id === authUser.id }">
                         <div
                           class="flex-none"
                           :class="{ 'order-2': authUser.id === message.sent_by.id }">
@@ -205,14 +219,14 @@
                 <div class="sm:flex w-full space-x-3 rtl:space-x-reverse items-center">
                   <div class="relative flex-1">
                     <input
-                      class="form-input rounded-full border-0 bg-[#f4f4f4] px-12 focus:outline-none py-2"
-                      placeholder="Type a message"
+                      class="form-input rounded-full border-0 bg-[#f4f4f4] pl-4 pr-12 focus:outline-none py-2"
+                      placeholder="Nhấn enter để gửi"
                       v-model="textMessage"
-                      @keyup.enter.exact="sendMessage(selectRoom)" />
+                      @keyup.enter.exact="sendMessage(selectedRoom)" />
                     <button
                       type="button"
                       class="absolute ltr:right-4 rtl:left-4 top-1/2 -translate-y-1/2 hover:text-primary"
-                      @click="sendMessage(selectRoom)">
+                      @click="sendMessage(selectedRoom)">
                       <icon-send />
                     </button>
                   </div>
@@ -226,7 +240,7 @@
   </AuthenticatedLayout>
 </template>
 <script lang="ts" setup>
-import { ref, computed, defineProps, watch, onMounted } from 'vue';
+import { ref, computed, defineProps, watch, onMounted, onBeforeUnmount } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import IconHorizontalDots from '@/Components/icon/icon-horizontal-dots.vue';
 import IconSearch from '@/Components/icon/icon-search.vue';
@@ -235,6 +249,7 @@ import IconSend from '@/Components/icon/icon-send.vue';
 import IconMessage from '@/Components/icon/icon-message.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import _ from 'lodash';
+import { showMessage } from '@/functions/alert';
 
 const page = usePage();
 const axios = window.axios;
@@ -242,81 +257,46 @@ const props = defineProps({
   rooms: Array<any>
 });
 
-const roomForm = useForm({
-  id: 0,
-  name: ''
-});
+const activeRooms = ref(props.rooms);
 const searchRooms = ref(props.rooms);
 const authUser = computed(() => {
   return page.props.auth.user;
 });
 const isShowUserChat = ref(false);
 const isShowChatMenu = ref(false);
-const loginUser = ref({
-  id: 0,
-  name: 'Alon Smith',
-  path: ''
-  // designation: '{{ authUser?.role }}'
-});
-const contactList = ref([
-  {
-    userId: 1,
-    name: 'Nguoi dung 1',
-    path: '',
-    time: '2:09 PM',
-    preview: 'Hi',
-    messages: [
-      {
-        fromUserId: 0,
-        toUserId: 1,
-        text: 'Hi'
-      },
-      {
-        fromUserId: 0,
-        toUserId: 1,
-        text: 'Hi'
-      },
-      {
-        fromUserId: 1,
-        toUserId: 0,
-        text: 'Welcome'
-      },
-      {
-        fromUserId: 1,
-        toUserId: 0,
-        text: 'Hi'
-      },
-      {
-        fromUserId: 0,
-        toUserId: 1,
-        text: 'Yes'
-      }
-    ],
-    active: false
-  }
-]);
-const searchRoom = ref('');
+const search = ref('');
 const textMessage = ref('');
 const selectedRoom = ref<any>(null);
-
-// search co the tim truoc sau do gui request len danh sach thoa man r tra ve
-//  hoac la lam nhu filter
 
 const selectRoom = async (room: any) => {
   // if private chat is not created
   if (!room.has_room) {
-    roomForm.id = room.id;
-    roomForm.name = `${authUser.value.id}__${room.id}`;
-    roomForm.post(route('private-chat.create'), {
-      onSuccess: () => {
-        room = page.props.flash_data.chat;
+    await axios
+      .post(route('private-chat.create'), {
+        id: room.id,
+        name: `${authUser.value.id}__${room.id}`
+      })
+      .then((response) => {
+        room = response.data.chat;
+        activeRooms.value?.push(room);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    Echo.join(`room.${room.id}`).listen('MessageSent', (data: any) => {
+      if (room.id === selectedRoom.value.id) {
+        selectedRoom.value.messages.push(data.message);
+        scrollToBottom();
+      } else {
+        console.log(room.unseen_messages++);
       }
     });
   }
   selectedRoom.value = room;
+  room.unseen_messages = 0;
   await getMessages(room);
-  isShowUserChat.value = true;
   scrollToBottom();
+  isShowUserChat.value = true;
   isShowChatMenu.value = false;
 };
 
@@ -326,10 +306,16 @@ const sendMessage = async (room: any, replyTo = null) => {
       .post(route('chat.send-message'), {
         content: textMessage.value,
         chat_id: room.id,
-        replied_to: replyTo
+        replied_to: replyTo,
+        sent_by: authUser.value.id
       })
       .then((response) => {
         selectedRoom.value.messages.push(response.data.message);
+        console.log(response.data.message);
+      })
+      .catch((error) => {
+        showMessage('Có lỗi xảy ra, không gửi được tin nhắn', 'error');
+        console.log(error);
       });
     textMessage.value = '';
     scrollToBottom();
@@ -337,9 +323,15 @@ const sendMessage = async (room: any, replyTo = null) => {
 };
 
 const getMessages = async (room: any) => {
-  await axios.get(route('chat.get-messages', { chat: room.id })).then((response) => {
-    selectedRoom.value.messages = response.data.messages;
-  });
+  await axios
+    .get(route('chat.get-messages', { chat: room.id }))
+    .then((response) => {
+      selectedRoom.value.messages = response.data.messages;
+    })
+    .catch((error) => {
+      showMessage('Có lỗi khi tải tin nhắn', 'error');
+      console.log(error);
+    });
 };
 
 const scrollToBottom = () => {
@@ -353,9 +345,9 @@ const scrollToBottom = () => {
 };
 
 const debounceGetRooms = _.debounce(async () => {
-  if (searchRoom.value.length > 0) {
+  if (search.value.length > 0) {
     await axios
-      .get(route('chat.search'), { params: { search: searchRoom.value } })
+      .get(route('chat.search'), { params: { search: search.value } })
       .then((response) => {
         searchRooms.value = response.data.chats;
       })
@@ -363,12 +355,37 @@ const debounceGetRooms = _.debounce(async () => {
         console.log(error);
       });
   } else {
-    searchRooms.value = props.rooms;
+    searchRooms.value = activeRooms.value;
   }
 }, 500);
 
 onMounted(() => {
-  console.log('test');
-  console.log(props.rooms);
+  searchRooms.value?.forEach((room) => {
+    if (room.unseen_messages === undefined) {
+      room.unseen_messages = 0;
+    }
+    Echo.join(`room.${room.id}`).listen('MessageSent', (data: any) => {
+      if (selectedRoom.value !== null && room.id === selectedRoom.value.id) {
+        room.unseen_messages = 0;
+        selectedRoom.value.messages.push(data.message);
+        scrollToBottom();
+      } else {
+        room.unseen_messages++;
+      }
+    });
+  });
+
+  // check new room created
+  Echo.join(`member.${authUser.value.id}`).listen('ChatCreated', (data: any) => {
+    console.log(data.chat);
+    activeRooms.value?.push(data.chat);
+  });
+});
+
+onBeforeUnmount(() => {
+  activeRooms.value?.forEach((room) => {
+    Echo.leave(`room.${room.id}`);
+  });
+  Echo.leave(`member.${authUser.value.id}`);
 });
 </script>

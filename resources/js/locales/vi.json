@@ -125,5 +125,6 @@
   "start": "Bắt đầu",
   "assigner": "Người giao việc",
   "response": "Trả lời",
-  "delete": "Xóa"
+  "delete": "Xóa",
+  "error_message_sent": "Có lỗi xảy ra: tin nhắn không gửi được"
 }

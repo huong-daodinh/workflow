@@ -10,14 +10,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+class ChatCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public $message)
+    public function __construct(public $user, public $chat)
     {
         //
     }
@@ -27,14 +27,15 @@ class MessageSent implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-      return [new PresenceChannel('room.'.$this->message->chat->id)];
+        return [new PresenceChannel('member.' . $this->user)];
     }
 
-    public function broadcastWith() {
+    public function broadcastWith(): array
+    {
       return [
-        'message' => $this->message
+        'chat' => $this->chat
       ];
     }
 }

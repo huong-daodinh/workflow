@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChatCreated;
 use App\Events\MessageSent;
 use App\Models\Chat;
 use App\Models\Message;
@@ -34,6 +35,7 @@ class ChatController extends Controller
             $chat->active = $chat->members->where('id', '!=', Auth::id())
               ->where('last_seen', '>=', Carbon::now()->subMinutes(5))
               ->isNotEmpty();
+            $chat->last_seen = $tempUser->last_seen;
           }
         }
       }
@@ -45,7 +47,7 @@ class ChatController extends Controller
 
     public function getMessages($id) {
         $chat = Chat::findOrFail($id);
-        $chat->load(['messages.sentBy', 'messages.repliedTo']);
+        $chat->load(['messages.sentBy', 'messages.replyTo']);
         $messages = $chat->messages;
         return response()->json(['messages' => $messages,]);
     }
@@ -59,8 +61,8 @@ class ChatController extends Controller
         'replied_to' => 'nullable|integer',
       ]);
       $message = Message::create($validated);
-      $message->load('sentBy',  'replyTo');
-      broadcast(new MessageSent($message));
+      $message->load('sentBy',  'replyTo', 'chat');
+      broadcast(new MessageSent($message))->toOthers();
       return response()->json(['message'=> $message]);
     }
 
@@ -98,6 +100,7 @@ class ChatController extends Controller
               $user->has_room = true;
               $user->id = $hasRoom->id;
             }
+            $user->active = $user->last_seen >= Carbon::now()->subMinutes(5);
         }
 
         $results = $chats->merge($users);
@@ -105,22 +108,32 @@ class ChatController extends Controller
     }
 
     public function createPrivateChat(Request $request) {
-      try {
-        $data = [
-          'name' => $request->name,
-          'avatar' => null,
-          'is_private_chat' => true,
-        ];
-        $chat = Chat::create($data);
-        $chat->members()->sync([
-          Auth::id() => ['is_leader' => true],
-          $request->id => ['is_leader' => false]
-        ]);
-        Session::flash('flash_data', [
-          'chat' => $chat,
-        ]);
-      } catch (\Exception $e) {
-        Session::flash('flash', ['type' => 'error', 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()]);
+        $isExisted = Chat::where('name', $request->id . '__' . Auth::id())->orWhere('name', Auth::id() . '__' . $request->id)->exists();
+        if (!$isExisted) {
+          $data = [
+            'name' => $request->name,
+            'avatar' => null,
+            'is_private_chat' => true,
+          ];
+          $chat = Chat::create($data);
+          $chat->members()->sync([
+            Auth::id() => ['is_leader' => true],
+            $request->id => ['is_leader' => false]
+          ]);
+          $tempUser = User::where('id', $request->id)->first();
+          $chat->has_room = true;
+          $chat->name = $tempUser->name;
+          $chat->avatar = $tempUser->avatar;
+          $chat->active = $tempUser->last_seen >= Carbon::now()->subMinutes(5);
+          $broadChat = [
+            'id' => $chat->id,
+            'name' => Auth::user()->name,
+            'avatar' => Auth::user()->avatar,
+            'active' => $chat->active,
+            'has_room' => true
+          ];
+          broadcast(new ChatCreated($request->id, $broadChat))->toOthers();
+          return response()->json(['chat'=> $chat]);
       }
     }
 }

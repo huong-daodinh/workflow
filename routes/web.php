@@ -42,7 +42,7 @@ Route::get('/setlocale/{locale}', function ($locale) {
     return redirect()->back();
 })->name('set-locale');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'online'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
