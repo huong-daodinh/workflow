@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
@@ -26,7 +27,12 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = $this->projectService->getAllProjects();
+        $authUser = Auth::user();
+        $projects = Project::with('attachments', 'createdBy')->filter()
+        ->when('admin' !== $authUser->role, function($query) use($authUser) {
+            $query->where('department_id', $authUser->department_id);
+        })
+        ->get();
         return Inertia::render('Project/Index', [
             'projects' => $projects
         ]);
@@ -45,6 +51,13 @@ class ProjectController extends Controller
      */
     public function store(ProjectRequest $request)
     {
+        if (Gate::denies('create-project')) {
+          Session::flash('flash', [
+            'type' => 'error',
+            'message' => 'Bạn không có quyền này'
+          ]);
+          return ;
+        }
         $validated = $request->validated();
         $validated['created_by'] = Auth::user()->id;
         $project = Project::create($validated);
@@ -66,6 +79,7 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $project->load(
           [
+            'tasks',
             'createdBy',
             'attachments',
             'taskLists.project',
@@ -99,9 +113,26 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(ProjectRequest $request, $id)
     {
-        //
+      $project = Project::findOrFail($id);
+      if (Gate::denies('update-project', $project)) {
+        Session::flash('flash', [
+          'type' => 'error',
+          'message' => 'Bạn không có quyền cập nhật'
+        ]);
+        return ;
+      }
+      $validated = $request->validated();
+      $project->update($validated);
+      $attachments = ProjectAttachment::whereIn('id', $validated['files'])->get();
+      foreach($attachments as $attachment) {
+          $attachment->update(['project_id' => $project->id]);
+      }
+      Session::flash('flash', [
+          'type' => 'success',
+          'message' => 'Project updated'
+      ]);
     }
 
     /**
@@ -109,7 +140,19 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        //
+      $project = Project::findOrFail($id);
+      if (Gate::denies('delete-project', $project)) {
+        Session::flash('flash', [
+          'type' => 'error',
+          'message' => 'Bạn không có quyền xoá'
+        ]);
+        return ;
+      }
+      $project->delete();
+      Session::flash('flash', [
+        'type' => 'success',
+        'message' => 'Project deleted'
+      ]);
     }
 
     public function analyze($id) {

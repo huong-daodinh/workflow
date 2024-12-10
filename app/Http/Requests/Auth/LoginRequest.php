@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use Hash;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -40,16 +41,22 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        $user = \App\Models\User::where('email', $this->input('email'))->first();
+        if (!$user || !Hash::check($this->input('password'), $user->password) || (!$user->active && $user->role != 'admin')) {
+          RateLimiter::hit($this->throttleKey());
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
+          throw ValidationException::withMessages([
+              'email' => $user && !$user->active && $user->role != 'admin'
+                  ? 'Tài khoản chưa được kích hoạt'
+                  : __('auth.failed'),
+          ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+      // Nếu vượt qua kiểm tra, thực hiện đăng nhập
+      Auth::login($user, $this->boolean('remember'));
+
+      RateLimiter::clear($this->throttleKey());
+
     }
 
     /**

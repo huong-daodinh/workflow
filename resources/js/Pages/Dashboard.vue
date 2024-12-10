@@ -48,15 +48,15 @@
         <!-- Recent Tasks -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="panel">
-            <div class="mb-5 text-lg font-bold">Recent Tasks</div>
+            <div class="mb-5 text-lg font-bold">Nhiệm vụ gần đây</div>
             <div class="table-responsive">
               <table>
                 <thead>
                   <tr>
                     <th class="ltr:rounded-l-md rtl:rounded-r-md">ID</th>
                     <th>DEADLINE</th>
-                    <th>TITLE</th>
-                    <th class="text-center ltr:rounded-r-md rtl:rounded-l-md">ASSIGNED BY</th>
+                    <th>Tiêu đề</th>
+                    <th class="text-center ltr:rounded-r-md rtl:rounded-l-md">Người giao</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -74,7 +74,25 @@
               </table>
             </div>
           </div>
-          <div class="panel"></div>
+          <div class="panel">
+            <div class="flex items-center mb-5">
+              <h5 class="font-semibold text-lg dark:text-white-light">7 ngày gần đây</h5>
+            </div>
+            <div>
+              <apexchart
+                height="160"
+                :options="dailySales"
+                :series="dailySalesSeries"
+                class="bg-white dark:bg-black rounded-lg overflow-hidden">
+                <!-- loader -->
+                <div
+                  class="min-h-[175px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08]">
+                  <span
+                    class="animate-spin border-2 border-black dark:border-white !border-l-transparent rounded-full w-5 h-5 inline-flex"></span>
+                </div>
+              </apexchart>
+            </div>
+          </div>
         </div>
         <!-- task rate -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -119,6 +137,88 @@ import IconChatDots from '@/Components/icon/icon-chat-dots.vue';
 import IconEye from '@/Components/icon/icon-eye.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 const store = useAppStore();
+
+const dailySales = computed(() => {
+  const isDark = store.theme === 'dark' || store.isDarkMode ? true : false;
+  return {
+    chart: {
+      height: 160,
+      type: 'bar',
+      fontFamily: 'Nunito, sans-serif',
+      toolbar: {
+        show: false
+      },
+      stacked: true,
+      stackType: '100%'
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      show: true,
+      width: 1
+    },
+    colors: ['#e2a03f', '#e0e6ed'],
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          legend: {
+            position: 'bottom',
+            offsetX: -10,
+            offsetY: 0
+          }
+        }
+      }
+    ],
+    xaxis: {
+      labels: {
+        show: false
+      },
+      categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
+    },
+    yaxis: {
+      show: false
+    },
+    fill: {
+      opacity: 1
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '25%'
+      }
+    },
+    legend: {
+      show: false
+    },
+    grid: {
+      show: false,
+      xaxis: {
+        lines: {
+          show: false
+        }
+      },
+      padding: {
+        top: 10,
+        right: -20,
+        bottom: -20,
+        left: -20
+      }
+    }
+  };
+});
+
+const dailySalesSeries = ref([
+  {
+    name: 'Sales',
+    data: [2, 1, 0, 0, 2, 1, 0]
+  },
+  {
+    name: 'Last Week',
+    data: [13, 13, 13, 13, 13, 13, 13]
+  }
+]);
 
 defineProps({
   tasksByStatus: {} as any,

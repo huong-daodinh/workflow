@@ -136,5 +136,14 @@
   "assigner": "Assigner",
   "response": "Response",
   "delete": "Delete",
-  "error_message_sent": "Can not send message"
+  "error_message_sent": "Can not send message",
+  "title": "Title",
+  "add_tags": "Add tags",
+  "ready_to_review": "Ready to review",
+  "employee": "Employee",
+  "department": "Department",
+  "create_new_task": "Create New Task",
+  "update_task_list": "Update Task List",
+  "del_task_list": "Delete Task List",
+  "sure_del_task_list": "Are you sure you want to delete this task list?"
 }

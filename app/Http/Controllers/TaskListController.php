@@ -37,7 +37,7 @@ class TaskListController extends Controller
         Session::flash('flash', [
           'type' => 'success',
           'message' => 'Task list created'
-      ]);
+        ]);
     }
 
     /**

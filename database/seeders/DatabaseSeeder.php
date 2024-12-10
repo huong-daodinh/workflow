@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+          AdminSeeder::class,
           TagSeeder::class,
           DepartmentSeeder::class,
           TagConnect::class,

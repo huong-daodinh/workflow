@@ -26,7 +26,7 @@ class TaskConversationController extends Controller
           'notify' => false,
           'regex_replacement' => [
               '{character}' => '@',
-              '{pattern}' => '[A-Za-z0-9]',
+              '{pattern}' => '\(([^)]+)\)',
               '{rules}' => '{1,20}'
             ]
         ]);

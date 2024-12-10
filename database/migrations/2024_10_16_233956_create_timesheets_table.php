@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('timesheets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->timestamp('check_in_time')->nullable();
-            $table->timestamp('check_out_time')->nullable();
+            $table->time('check_in_time')->nullable();
+            $table->time('check_out_time')->nullable();
+            $table->date('date');
             $table->softDeletes();
             $table->timestamps();
         });

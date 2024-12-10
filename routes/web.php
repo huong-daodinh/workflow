@@ -13,6 +13,7 @@ use App\Http\Controllers\TaskListController;
 use App\Http\Controllers\TaskResultController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\App;
@@ -71,7 +72,15 @@ Route::middleware(['auth', 'online'])->group(function () {
     Route::get('project/download-attachment/{attachment}', [ProjectAttachmentController::class, 'download'])->name('project-attachment.download');
     Route::get('project/analyze/{project}', [ProjectController::class, 'analyze'])->name('project.analyze');
     Route::resource('project', ProjectController::class);
-    Route::resource('timesheet', TimesheetController::class);
+
+    Route::group(['prefix'=> 'timesheet'], function () {
+      Route::get('/user/{userId}', [TimesheetController::class, 'getUserTimesheet'])->name('timesheet.detail');
+      Route::post('/user/{userId}/check_in', [TimesheetController::class, 'checkIn'])->name('timesheet.check_in');
+      Route::post('/user/{timesheetId}/check_out', [TimesheetController::class, 'checkOut'])->name('timesheet.check_out');
+      Route::get('/export/{userId}', [TimesheetController::class, 'export']);
+      Route::get('/index', [TimesheetController::class, ''])->name('timesheet.index')->name('timesheet.index');
+    });
+
     Route::resource('department', DepartmentController::class);
 
     Route::get('/task/messages/{task}', [TaskConversationController::class, 'getMessages'])->name('task.messages');
@@ -92,6 +101,12 @@ Route::middleware(['auth', 'online'])->group(function () {
     Route::resource('subtask', SubtaskController::class);
 
     Route::resource('task-list', TaskListController::class);
+
+    Route::resource('user', UserController::class);
+
+    Route::get('/settings', function () {
+        return Inertia::render('SettingPage');
+    })->name('settings');
 });
 
 

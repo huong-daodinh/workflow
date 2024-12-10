@@ -26,12 +26,15 @@ class UserFactory extends Factory
     {
         $n = fake()->numberBetween(1, 34);
         $roleRate = fake()->numberBetween(1, 2);
+        $role = $roleRate === 1 ? 'manager' : 'member';
+        $name = $role .' '. fake()->userName();
+        $email = $role . fake()->unique()->safeEmail();
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $name,
+            'email' => $email,
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role' => $roleRate === 1 ? 'manager' : 'member',
+            'role' => $role,
             'remember_token' => Str::random(10),
             'avatar' => '/assets/images/profile-' . $n . '.jpeg',
             'department_id' => Department::factory(),

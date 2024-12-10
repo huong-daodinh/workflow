@@ -50,11 +50,6 @@
                       $t('home')
                     }}</Link>
                   </li>
-                  <!-- <li class="hover:bg-gray-100 rounded">
-                    <Link :href="route('analyze')" @click="toggleMobileMenu">{{
-                      $t('analytics')
-                    }}</Link>
-                  </li> -->
                 </ul>
               </vue-collapsible>
             </li>
@@ -81,7 +76,7 @@
                 class="nav-link group w-full"
                 @click="toggleMobileMenu">
                 <div class="flex items-center">
-                  <IconCircleCheck fill="true" class="group-hover:!text-primary shrink-0" />
+                  <icon-menu-calendar class="group-hover:!text-primary shrink-0" />
                   <span
                     class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
                     {{ $t('timesheet') }}
@@ -90,20 +85,35 @@
               </Link>
             </li>
 
-            <li class="menu nav-item">
-              <!-- <Link
-                :href="route('team.index')"
-                :class="{ active: isUrl('team') }"
+            <li class="menu nav-item" v-if="can.department">
+              <Link
+                :href="route('department.index')"
+                :class="{ active: isUrl('department') }"
+                class="nav-link group w-full"
+                @click="toggleMobileMenu">
+                <div class="flex items-center">
+                  <icon-menu-components class="group-hover:!text-primary shrink-0" />
+                  <span
+                    class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                    {{ $t('department') }}
+                  </span>
+                </div>
+              </Link>
+            </li>
+            <li class="menu nav-item" v-if="can.user">
+              <Link
+                :href="route('user.index')"
+                :class="{ active: isUrl('user') }"
                 class="nav-link group w-full"
                 @click="toggleMobileMenu">
                 <div class="flex items-center">
                   <icon-menu-users class="group-hover:!text-primary shrink-0" />
                   <span
                     class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                    {{ $t('team') }}
+                    {{ $t('employee') }}
                   </span>
                 </div>
-              </Link> -->
+              </Link>
             </li>
 
             <h2
@@ -112,7 +122,11 @@
               <span>{{ $t('system') }}</span>
             </h2>
             <li class="menu nav-item">
-              <button type="button" class="nav-link group w-full">
+              <Link
+                :href="route('settings')"
+                :class="{ active: isUrl('settings') }"
+                class="nav-link group w-full"
+                @click="toggleMobileMenu">
                 <div class="flex items-center">
                   <icon-menu-apps class="group-hover:!text-primary shrink-0" />
                   <span
@@ -120,7 +134,7 @@
                     {{ $t('setting') }}
                   </span>
                 </div>
-              </button>
+              </Link>
             </li>
           </ul>
         </div>
@@ -130,27 +144,28 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useAppStore } from '@/stores/index';
 import VueCollapsible from 'vue-height-collapsible/vue3';
 import IconCaretsDown from '@/Components/icon/icon-carets-down.vue';
 import IconMenuDashboard from '@/Components/icon/menu/icon-menu-dashboard.vue';
 import IconMinus from '@/Components/icon/icon-minus.vue';
 import IconCaretDown from '@/Components/icon/icon-caret-down.vue';
-import IconMenuApps from '../icon/menu/icon-menu-apps.vue';
-import IconMenuUsers from '../icon/menu/icon-menu-users.vue';
-import IconMenuDocumentation from '../icon/menu/icon-menu-documentation.vue';
-import IconCircleCheck from '../icon/icon-circle-check.vue';
+import IconMenuApps from '@/Components/icon/menu/icon-menu-apps.vue';
+import IconMenuUsers from '@/Components/icon/menu/icon-menu-users.vue';
+import IconMenuDocumentation from '@/Components/icon/menu/icon-menu-documentation.vue';
+import IconMenuCalendar from '@/Components/icon/menu/icon-menu-calendar.vue';
+import IconMenuComponents from '@/Components/icon/menu/icon-menu-components.vue';
 
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { showMessage } from '@/functions/alert';
-import i18n from '@/i18n';
 
 const page = usePage();
 const store = useAppStore();
 const activeDropdown: any = ref('');
 
+const can = computed(() => page.props.auth.can);
 onMounted(() => {
   const selector = document.querySelector('.sidebar ul a[href="' + window.location.href + '"]');
 

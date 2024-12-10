@@ -18,12 +18,12 @@ class ProjectFactory extends Factory
      */
     public function definition(): array
     {
+      $user = User::where('role', 'manager')->inRandomOrder()->first();
         return [
-            'title' => fake()->text(),
-            'description' => fake()->paragraph(),
-            'created_by' => User::where('role', 'manager')->inRandomOrder()->first()->id,
-            'type' => 'D', // P for personal, D for department
-            'department_id' => Department::factory()
+            'title' => fake()->text('20'),
+            'description' => fake()->paragraph('20'),
+            'created_by' => $user->id,
+            'department_id' => $user->department_id
         ];
     }
 }

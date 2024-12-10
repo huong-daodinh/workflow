@@ -9,7 +9,7 @@ return [
             'model' => User::class,
 
             // The column that will be used to search the model by the parser.
-            'column' => 'id',
+            'column' => 'name',
 
             // The route used to generate the user link.
             'route' => '/user/profile/',

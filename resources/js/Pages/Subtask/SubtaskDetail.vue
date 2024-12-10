@@ -134,154 +134,15 @@
 <script lang="ts" setup>
 import { subTask } from '@/interfaces/index.interfaces';
 import { defineProps, ref, defineEmits, onMounted } from 'vue';
-import {
-  ClassicEditor,
-  AccessibilityHelp,
-  Autoformat,
-  AutoImage,
-  AutoLink,
-  Autosave,
-  BalloonToolbar,
-  BlockQuote,
-  Bold,
-  CloudServices,
-  Code,
-  CodeBlock,
-  Essentials,
-  FindAndReplace,
-  Heading,
-  Highlight,
-  HorizontalLine,
-  HtmlEmbed,
-  ImageBlock,
-  ImageCaption,
-  ImageInline,
-  ImageInsert,
-  ImageInsertViaUrl,
-  ImageResize,
-  ImageStyle,
-  ImageTextAlternative,
-  ImageUpload,
-  Indent,
-  IndentBlock,
-  Italic,
-  Link,
-  LinkImage,
-  List,
-  ListProperties,
-  MediaEmbed,
-  Mention,
-  Paragraph,
-  PasteFromOffice,
-  PictureEditing,
-  SelectAll,
-  SpecialCharacters,
-  SpecialCharactersArrows,
-  SpecialCharactersCurrency,
-  SpecialCharactersEssentials,
-  SpecialCharactersLatin,
-  SpecialCharactersMathematical,
-  SpecialCharactersText,
-  Strikethrough,
-  Table,
-  TableCellProperties,
-  TableProperties,
-  TableToolbar,
-  TextTransformation,
-  TodoList,
-  Underline,
-  Undo,
-  CKFinderUploadAdapter,
-  logError
-} from 'ckeditor5';
 import 'ckeditor5/ckeditor5.css';
 import '@css/ckeditor.css';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
 import IconX from '@/Components/icon/icon-x.vue';
 import UserInfo from '@/Components/UserInfo.vue';
+import { editorConfig } from '@/Components/plugins/ckeditor';
 
-const options = ref({
-  editor: ClassicEditor,
-  editorConfig: {
-    plugins: [
-      AccessibilityHelp,
-      Autoformat,
-      AutoImage,
-      AutoLink,
-      Autosave,
-      BalloonToolbar,
-      BlockQuote,
-      Bold,
-      CloudServices,
-      Code,
-      CodeBlock,
-      Essentials,
-      FindAndReplace,
-      Heading,
-      Highlight,
-      HorizontalLine,
-      HtmlEmbed,
-      ImageBlock,
-      ImageCaption,
-      ImageInline,
-      ImageInsert,
-      ImageInsertViaUrl,
-      ImageResize,
-      ImageStyle,
-      ImageTextAlternative,
-      ImageUpload,
-      Indent,
-      IndentBlock,
-      Italic,
-      Link,
-      LinkImage,
-      List,
-      ListProperties,
-      MediaEmbed,
-      Mention,
-      Paragraph,
-      PasteFromOffice,
-      PictureEditing,
-      SelectAll,
-      SpecialCharacters,
-      SpecialCharactersArrows,
-      SpecialCharactersCurrency,
-      SpecialCharactersEssentials,
-      SpecialCharactersLatin,
-      SpecialCharactersMathematical,
-      SpecialCharactersText,
-      Strikethrough,
-      Table,
-      TableCellProperties,
-      TableProperties,
-      TableToolbar,
-      TextTransformation,
-      TodoList,
-      Underline,
-      Undo,
-      CKFinderUploadAdapter
-    ],
-    toolbar: [
-      'undo',
-      'redo',
-      '|',
-      'bold',
-      'italic',
-      'underline',
-      '|',
-      'link',
-      'highlight',
-      'blockQuote',
-      'codeBlock',
-      '|',
-      'numberedList',
-      'todoList',
-      'outdent',
-      'indent'
-    ]
-  }
-});
+const options = ref(editorConfig);
 const isEditDescription = ref(false);
 const isUpdateTaskResult = ref(false);
 const taskData = ref<subTask>();
@@ -291,14 +152,6 @@ const props = defineProps({
     type: Number,
     required: true
   }
-  // assignees: {
-  //   type: Array as () => user[],
-  //   required: true
-  // },
-  // assigners: {
-  //   type: Array as () => user[],
-  //   required: true
-  // }
 });
 
 const emits = defineEmits(['close']);
@@ -340,6 +193,7 @@ const startTask = (taskId: number) => {
 const updateResult = () => {
   subtaskForm.patch(route('subtask.update', props.subtask_id));
   isUpdateTaskResult.value = false;
+  getSubtaskData();
 };
 
 const onMarkAsDone = () => {
@@ -355,19 +209,19 @@ const onMarkAsDone = () => {
 const getSubtaskData = async () => {
   await axios.get(route('subtask.show', props.subtask_id)).then((response) => {
     taskData.value = response.data;
+    subtaskForm.title = taskData.value.title;
+    subtaskForm.description = taskData.value.description;
+    subtaskForm.due_date = taskData.value.due_date;
+    subtaskForm.result = taskData.value.result;
+    subtaskForm.status = taskData.value.status;
+    subtaskForm.started_at = taskData.value.started_at;
+    subtaskForm.assignee = taskData.value.assignee;
+    subtaskForm.assigner = taskData.value.assigner;
+    subtaskForm.assigner_id = taskData.value.assigner.id;
+    subtaskForm.assignee_id = taskData.value.assignee.id;
+    subtaskForm.task_id = taskData.value.task_id;
+    subtaskForm.created_by = taskData.value.assigner.id;
   });
-  subtaskForm.title = taskData.value.title;
-  subtaskForm.description = taskData.value.description;
-  subtaskForm.due_date = taskData.value.due_date;
-  subtaskForm.result = taskData.value.result;
-  subtaskForm.status = taskData.value.status;
-  subtaskForm.started_at = taskData.value.started_at;
-  subtaskForm.assignee = taskData.value.assignee;
-  subtaskForm.assigner = taskData.value.assigner;
-  subtaskForm.assigner_id = taskData.value.assigner.id;
-  subtaskForm.assignee_id = taskData.value.assignee.id;
-  subtaskForm.task_id = taskData.value.task_id;
-  subtaskForm.created_by = taskData.value.assigner.id;
 };
 
 onMounted(() => {

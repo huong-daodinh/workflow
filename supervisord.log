@@ -1335,3 +1335,155 @@
 2024-12-09 01:21:28,620 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
 2024-12-09 01:21:28,621 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
 2024-12-09 01:21:28,622 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-10 13:19:42,563 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-10 13:19:42,563 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-10 13:19:42,563 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-10 13:19:42,563 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-10 13:19:42,566 INFO supervisord started with pid 1
+2024-12-10 13:19:43,574 INFO spawned: 'cron-job' with pid 10
+2024-12-10 13:19:43,576 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-10 13:19:43,577 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-10 13:19:43,578 INFO spawned: 'php-fpm' with pid 13
+2024-12-10 13:19:44,644 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 13:19:44,644 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 13:19:44,644 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 13:19:44,645 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 14:38:24,726 WARN received SIGQUIT indicating exit request
+2024-12-10 14:38:24,727 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-10 14:38:24,738 INFO stopped: php-fpm (exit status 0)
+2024-12-10 14:38:24,743 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-10 14:38:24,743 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-10 14:38:24,744 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-10 19:50:55,508 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-10 19:50:55,508 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-10 19:50:55,508 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-10 19:50:55,508 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-10 19:50:55,512 INFO supervisord started with pid 1
+2024-12-10 19:50:56,515 INFO spawned: 'cron-job' with pid 10
+2024-12-10 19:50:56,517 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-10 19:50:56,518 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-10 19:50:56,519 INFO spawned: 'php-fpm' with pid 13
+2024-12-10 19:50:57,596 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 19:50:57,596 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 19:50:57,596 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-10 19:50:57,596 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-11 00:49:20,704 WARN received SIGQUIT indicating exit request
+2024-12-11 00:49:20,749 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-11 00:49:20,846 INFO stopped: php-fpm (exit status 0)
+2024-12-11 00:49:20,865 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-11 00:49:20,865 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-11 00:49:20,868 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-11 16:10:52,911 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-11 16:10:52,912 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-11 16:10:52,912 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-11 16:10:52,912 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-11 16:10:52,915 INFO supervisord started with pid 1
+2024-12-11 16:10:53,924 INFO spawned: 'cron-job' with pid 10
+2024-12-11 16:10:53,926 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-11 16:10:53,927 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-11 16:10:53,929 INFO spawned: 'php-fpm' with pid 13
+2024-12-11 16:10:55,704 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-11 16:10:55,704 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-11 16:10:55,705 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-11 16:10:55,705 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-11 17:50:30,699 WARN received SIGQUIT indicating exit request
+2024-12-11 17:50:30,735 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-11 17:50:30,811 INFO stopped: php-fpm (exit status 0)
+2024-12-11 17:50:30,825 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-11 17:50:30,825 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-11 17:50:30,826 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-12 04:42:23,569 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-12 04:42:23,569 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-12 04:42:23,569 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-12 04:42:23,569 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-12 04:42:23,573 INFO supervisord started with pid 1
+2024-12-12 04:42:24,577 INFO spawned: 'cron-job' with pid 10
+2024-12-12 04:42:24,579 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-12 04:42:24,582 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-12 04:42:24,584 INFO spawned: 'php-fpm' with pid 13
+2024-12-12 04:42:25,666 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 04:42:25,666 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 04:42:25,666 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 04:42:25,666 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 05:13:25,981 WARN received SIGQUIT indicating exit request
+2024-12-12 05:13:25,981 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-12 05:13:25,989 WARN exited: laravel-worker_00 (exit status 1; not expected)
+2024-12-12 05:13:25,989 WARN exited: laravel-worker_01 (exit status 1; not expected)
+2024-12-12 05:13:25,990 INFO stopped: php-fpm (exit status 0)
+2024-12-12 05:13:26,991 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-12 15:24:13,985 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-12 15:24:13,985 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-12 15:24:13,985 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-12 15:24:13,985 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-12 15:24:13,989 INFO supervisord started with pid 1
+2024-12-12 15:24:14,993 INFO spawned: 'cron-job' with pid 10
+2024-12-12 15:24:14,994 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-12 15:24:14,995 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-12 15:24:14,996 INFO spawned: 'php-fpm' with pid 13
+2024-12-12 15:24:16,064 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 15:24:16,064 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 15:24:16,064 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 15:24:16,064 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 17:47:29,235 WARN received SIGQUIT indicating exit request
+2024-12-12 17:47:29,235 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-12 17:47:29,246 INFO stopped: php-fpm (exit status 0)
+2024-12-12 17:47:29,251 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-12 17:47:29,251 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-12 17:47:29,251 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-12 23:13:26,909 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-12 23:13:26,909 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-12 23:13:26,909 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-12 23:13:26,909 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-12 23:13:26,914 INFO supervisord started with pid 1
+2024-12-12 23:13:27,916 INFO spawned: 'cron-job' with pid 10
+2024-12-12 23:13:27,918 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-12 23:13:27,920 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-12 23:13:27,921 INFO spawned: 'php-fpm' with pid 13
+2024-12-12 23:13:28,997 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 23:13:28,997 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 23:13:28,997 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-12 23:13:28,997 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 00:56:11,919 WARN received SIGQUIT indicating exit request
+2024-12-13 00:56:11,919 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-13 00:56:11,927 INFO stopped: php-fpm (exit status 0)
+2024-12-13 00:56:11,930 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-13 00:56:11,930 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-13 00:56:11,931 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-13 01:33:16,279 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-13 01:33:16,279 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-13 01:33:16,279 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-13 01:33:16,279 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-13 01:33:16,283 INFO supervisord started with pid 1
+2024-12-13 01:33:17,287 INFO spawned: 'cron-job' with pid 10
+2024-12-13 01:33:17,288 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-13 01:33:17,290 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-13 01:33:17,291 INFO spawned: 'php-fpm' with pid 13
+2024-12-13 01:33:18,365 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 01:33:18,365 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 01:33:18,365 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 01:33:18,365 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 04:24:39,710 WARN received SIGQUIT indicating exit request
+2024-12-13 04:24:39,711 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-13 04:24:39,721 INFO stopped: php-fpm (exit status 0)
+2024-12-13 04:24:39,726 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-13 04:24:39,726 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-13 04:24:39,726 WARN stopped: cron-job (terminated by SIGTERM)
+2024-12-13 04:24:45,702 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2024-12-13 04:24:45,702 INFO Included extra file "/etc/supervisor.d/cron.conf" during parsing
+2024-12-13 04:24:45,702 INFO Included extra file "/etc/supervisor.d/php-fpm.conf" during parsing
+2024-12-13 04:24:45,702 INFO Included extra file "/etc/supervisor.d/worker.conf" during parsing
+2024-12-13 04:24:45,704 INFO supervisord started with pid 1
+2024-12-13 04:24:46,708 INFO spawned: 'cron-job' with pid 10
+2024-12-13 04:24:46,712 INFO spawned: 'laravel-worker_00' with pid 11
+2024-12-13 04:24:46,714 INFO spawned: 'laravel-worker_01' with pid 12
+2024-12-13 04:24:46,716 INFO spawned: 'php-fpm' with pid 13
+2024-12-13 04:24:47,853 INFO success: cron-job entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 04:24:47,854 INFO success: laravel-worker_00 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 04:24:47,854 INFO success: laravel-worker_01 entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 04:24:47,854 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2024-12-13 05:05:57,224 WARN received SIGQUIT indicating exit request
+2024-12-13 05:05:57,225 INFO waiting for cron-job, laravel-worker_00, laravel-worker_01, php-fpm to die
+2024-12-13 05:05:57,247 INFO stopped: php-fpm (exit status 0)
+2024-12-13 05:05:57,256 WARN stopped: laravel-worker_01 (terminated by SIGTERM)
+2024-12-13 05:05:57,256 WARN stopped: laravel-worker_00 (terminated by SIGTERM)
+2024-12-13 05:05:57,257 WARN stopped: cron-job (terminated by SIGTERM)

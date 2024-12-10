@@ -19,14 +19,14 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         Department::factory()
-            ->count(1)
+            ->count(2)
             ->has(User::factory()->count(5))
             ->has(
               Project::factory()->count(5)
                 ->has(
-                  TaskList::factory()->count(5)->has(Task::factory()->count(5)->has(SubTask::factory()->count(5)))
+                  TaskList::factory()->count(5)->has(Task::factory()->count(5)->has(SubTask::factory()->count(1)))
                 )->has(
-                  Task::factory()->count(5)->has(SubTask::factory()->count(2))
+                  Task::factory()->count(5)
                 ))->create();
     }
 }

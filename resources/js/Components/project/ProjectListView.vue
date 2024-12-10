@@ -62,9 +62,12 @@
                               </button>
                             </li>
                             <li>
-                              <button @click="addEditTaskList(task_list)">
-                                {{ $t('update_task_list') }}
+                              <button @click="addTask(task_list.id)">
+                                <icon-plus /> {{ $t('create_new_task') }}
                               </button>
+                            </li>
+                            <li>
+                              <button @click="onTienDo()">Tiến độ</button>
                             </li>
                             <li
                               class="border-t border-white-light text-red-500 dark:border-white-light/10">
@@ -678,6 +681,10 @@ const saveTaskList = () => {
       }
     });
   }
+};
+
+const onTienDo = () => {
+  alert('Nut duoc bam');
 };
 
 const clearTaskForm = () => {

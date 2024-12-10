@@ -58,7 +58,7 @@
           </TransitionChild>
 
           <div class="fixed inset-0 overflow-y-auto">
-            <div class="flex min-h-full items-start justify-center px-4 py-8">
+            <div class="flex min-h-full items-center justify-center px-4 py-8">
               <TransitionChild
                 as="template"
                 enter="duration-300 ease-out"
@@ -76,6 +76,87 @@
                     <icon-x />
                   </button>
                   <div
+                    class="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
+                    {{ params.id ? 'Cập nhật Timesheet' : 'Tạo Timesheet' }}
+                  </div>
+                  <div class="p-5">
+                    <form @submit.prevent="saveEvent">
+                      <div class="mb-5">
+                        <label for="dateStart">From :</label>
+                        <input
+                          id="dateStart"
+                          type="datetime-local"
+                          name="start"
+                          class="form-input"
+                          placeholder="Event Start Date"
+                          v-model="params.start" />
+                        <div class="text-danger mt-2" id="startDateErr"></div>
+                      </div>
+                      <div class="mb-5">
+                        <label for="dateEnd">To :</label>
+                        <input
+                          id="dateEnd"
+                          type="datetime-local"
+                          name="end"
+                          class="form-input"
+                          placeholder="Event End Date"
+                          v-model="params.end" />
+                        <div class="text-danger mt-2" id="endDateErr"></div>
+                      </div>
+
+                      <div class="flex justify-end items-center mt-8">
+                        <button
+                          type="button"
+                          class="btn btn-outline-danger"
+                          @click="isAddEventModal = false">
+                          Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">
+                          {{ params.id ? 'Cập nhật' : 'Tạo' }}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </DialogPanel>
+              </TransitionChild>
+            </div>
+          </div>
+        </Dialog>
+      </TransitionRoot>
+
+      <!-- check in modal -->
+      <TransitionRoot appear :show="isCheckInModal" as="template">
+        <Dialog as="div" @close="isCheckInModal = false" class="relative z-[51]">
+          <TransitionChild
+            as="template"
+            enter="duration-300 ease-out"
+            enter-from="opacity-0"
+            enter-to="opacity-100"
+            leave="duration-200 ease-in"
+            leave-from="opacity-100"
+            leave-to="opacity-0">
+            <DialogOverlay class="fixed inset-0 bg-[black]/60" />
+          </TransitionChild>
+
+          <div class="fixed inset-0 overflow-y-auto">
+            <div class="flex min-h-full items-start justify-center px-4 py-8">
+              <TransitionChild
+                as="template"
+                enter="duration-300 ease-out"
+                enter-from="opacity-0 scale-95"
+                enter-to="opacity-100 scale-100"
+                leave="duration-200 ease-in"
+                leave-from="opacity-100 scale-100"
+                leave-to="opacity-0 scale-95">
+                <DialogPanel
+                  class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                  <button
+                    type="button"
+                    class="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
+                    @click="isCheckInModal = false">
+                    <icon-x />
+                  </button>
+                  <div
                     class="text-lg font-bold bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
                     Thực hiện chấm công
                   </div>
@@ -85,7 +166,7 @@
                     <div class="flex justify-end items-center mt-8">
                       <button
                         type="button"
-                        @click="isAddEventModal = false"
+                        @click="isCheckInModal = false"
                         class="btn btn-outline-danger">
                         Cancel
                       </button>
@@ -121,18 +202,89 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import Swal from 'sweetalert2';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import IconPlus from '@/Components/icon/icon-plus.vue';
 import IconX from '@/Components/icon/icon-x.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useI18n } from 'vue-i18n';
 import vnLocale from '@fullcalendar/core/locales/vi';
 import enLocale from '@fullcalendar/core/locales/en-gb';
+import { defineProps } from 'vue';
+import { timesheet } from '@/interfaces/index.interfaces';
 
 const localeMatch = {
   vi: vnLocale,
   en: enLocale
 };
+
+const props = defineProps({
+  timesheets: {
+    type: Array<timesheet>,
+    required: true
+  },
+  user_id: {
+    type: Number,
+    required: true
+  }
+});
+
+function isCheckInTimeOk(checkInTime: string) {
+  const checkInHourThreshold = 9;
+  const checkInHour = new Date(checkInTime).getHours();
+  const checkInMinute = new Date(checkInTime).getMinutes();
+  if (checkInHour < checkInHourThreshold) {
+    return true;
+  }
+  return checkInMinute <= 0;
+}
+
+function isCheckOutTimeOk(checkOutTime: string) {
+  const checkOutHourThreshold = 17;
+  const checkOutMinimumHourThreshold = 30;
+  const checkOutHour = new Date(checkOutTime).getHours();
+  const checkOutMinute = new Date(checkOutTime).getMinutes();
+  if (checkOutHour > checkOutHourThreshold) {
+    return true;
+  }
+  if (checkOutHour == checkOutHourThreshold && checkOutMinute >= checkOutMinimumHourThreshold) {
+    return true;
+  }
+  return false;
+}
+
+function fetchTimesheetToCalendar(timesheetData: Array<timesheet>) {
+  return [
+    ...(timesheetData.map((item) => {
+      const isCheckInOk = isCheckInTimeOk(item.date + ' ' + item.check_in_time);
+      return {
+        title: item.check_in_time + (isCheckInOk ? ' Ok' : ' Late'),
+        start: item.date,
+        className: isCheckInOk ? 'bg-green-500' : 'bg-red-500'
+      };
+    }) || []),
+    ...(
+      timesheetData.map((item) => {
+        if (item.check_out_time !== null) {
+          const isCheckOutOk = isCheckOutTimeOk(item.date + ' ' + item.check_out_time);
+          return {
+            title: item.check_out_time + (isCheckOutOk ? ' Ok' : ' Left early'),
+            start: item.date,
+            className: isCheckOutOk ? 'bg-green-500' : 'bg-red-500'
+          };
+        }
+        return null;
+      }) || []
+    ).filter((item) => item !== null)
+  ];
+}
+
+const axios = window.axios;
+const timesheetForm = useForm({
+  date: String,
+  check_in_time: String,
+  check_out_time: String,
+  user_id: Number
+});
 
 const i18n = reactive(useI18n());
 const params = ref({
@@ -144,6 +296,7 @@ const params = ref({
   type: 'primary'
 });
 const isAddEventModal = ref(false);
+const isCheckInModal = ref(false);
 const calendar: any = ref(null);
 const now = new Date();
 const events: any = ref([]);
@@ -151,6 +304,12 @@ const timesheetCheck = ref({
   check_in: false,
   check_out: false
 });
+
+const filter = ref({
+  month: now.getMonth() + 1,
+  year: now.getFullYear()
+});
+
 const calendarOptions = computed(() => {
   return {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -172,27 +331,6 @@ const calendarOptions = computed(() => {
     events: events.value
   };
 });
-
-onMounted(() => {
-  getEvents();
-});
-
-const getEvents = () => {
-  events.value = [
-    {
-      id: 1,
-      title: 'Late',
-      start: now.getFullYear() + '-' + getMonth(now) + '-01T09:30:00',
-      className: 'danger'
-    },
-    {
-      id: 2,
-      title: 'Ok',
-      start: now.getFullYear() + '-' + getMonth(now) + '-01T17:35:00',
-      className: 'success'
-    }
-  ];
-};
 
 const getMonth = (dt: Date, add: number = 0) => {
   let month = dt.getMonth() + 1 + add;
@@ -225,7 +363,7 @@ const editEvent = () => {
     description: ''
   };
   //   saveEvent();
-  isAddEventModal.value = true;
+  isCheckInModal.value = true;
 };
 
 const dateFormat = (dt: any) => {
@@ -277,8 +415,13 @@ const saveEvent = () => {
     showMessage('Không thể chấm công lúc này', 'error');
   }
   calendar.value.getApi(); //refresh Calendar
-  isAddEventModal.value = false;
+  isCheckInModal.value = false;
 };
+
+onMounted(() => {
+  // calendarOptions.value.events = fetchTimesheetToCalendar(props.timesheets);
+  events.value = fetchTimesheetToCalendar(props.timesheets);
+});
 
 const showMessage = (msg = '', type = 'success') => {
   const toast: any = Swal.mixin({

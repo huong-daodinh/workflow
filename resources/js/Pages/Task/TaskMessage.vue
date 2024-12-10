@@ -73,7 +73,7 @@
             <template #item-@="{ item }" class="cursor-pointer">
               <div class="user">
                 #{{ item.id }}
-                <span class="dim"> ({{ item.value }}) </span>
+                <span class="dim"> {{ item.value }} </span>
               </div>
             </template>
           </Mentionable>
@@ -118,7 +118,8 @@ const mentionData = computed(() => {
   return props.users.map((user: user) => {
     return {
       id: user.id,
-      value: user.id,
+      value: `(${user.name})`,
+      // value: user.id,
       name: user.name
     };
   });

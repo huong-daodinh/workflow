@@ -16,7 +16,12 @@ export interface user {
   created_at: string;
   updated_at: string;
   phone: string;
+  password: string;
   role: string;
+  can_action?: boolean;
+  active: boolean;
+  department: department;
+  department_id: number;
 }
 
 export interface tag {
@@ -98,4 +103,20 @@ export interface task_message {
 export interface task_result {
   task: task;
   description: string;
+}
+
+export interface department {
+  id: number;
+  name: string;
+  employees?: user[];
+  created_at: string;
+  updated_at: string;
+  can_delete: boolean;
+}
+
+export interface timesheet {
+  id: number;
+  date: string;
+  check_in_time: string;
+  check_out_time: string;
 }

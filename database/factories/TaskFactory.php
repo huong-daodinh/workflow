@@ -19,11 +19,11 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         $assigner = User::where('role', 'manager')->inRandomOrder()->first();
-        $status = fake()->randomElement(['todo', 'doing', 'done', 'closed']);
+        $status = fake()->randomElement(['pending', 'doing', 'ready_to_review', 'closed']);
         return [
           'title' => fake()->text(50),
           'due_date' => fake()->dateTimeBetween('-1 week', '+1 week'),
-          'started_at' => $status !== 'todo' ? fake()->dateTimeBetween('-1 month', 'now') : null,
+          'started_at' => $status !== 'pending' ? fake()->dateTimeBetween('-1 month', 'now') : null,
           'status' => $status,
           'description' => fake()->paragraph(10),
           'assigner_id' => $assigner->id,

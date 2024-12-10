@@ -139,5 +139,7 @@
   "sure_del_task_list": "Bạn có chắc chắn muốn xóa danh sách công việc này?",
   "title": "Tiêu đề",
   "add_tags": "Thêm thẻ",
-  "ready_to_review": "Sẵn sàng nghiệm thu"
+  "ready_to_review": "Sẵn sàng nghiệm thu",
+  "employee": "Nhân viên",
+  "department": "Phòng ban"
 }

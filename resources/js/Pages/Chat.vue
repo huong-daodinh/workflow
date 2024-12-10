@@ -439,7 +439,7 @@ const chatForm = useForm({
 const selectRoom = async (room: any) => {
   // if chat is not public and is not created
   isGettingMessages.value = true;
-  if (!room.has_room && room.is_private_chat) {
+  if (!room.has_room) {
     await axios
       .post(route('private-chat.create'), {
         id: room.id,
@@ -447,6 +447,7 @@ const selectRoom = async (room: any) => {
       })
       .then((response) => {
         room = response.data.chat;
+        room.has_room = true;
         activeRooms.value?.push(room);
       })
       .catch((error) => {

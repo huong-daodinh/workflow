@@ -120,7 +120,7 @@ return [
     'prohibited_unless' => ':attribute bị cấm trừ khi :other nằm trong :values.',
     'prohibits' => ':attribute cấm :other hiện diện.',
     'regex' => 'Định dạng :attribute không hợp lệ.',
-    'required' => 'Bạn phải nhập :attribute',
+    'required' => 'Bạn phải nhập dữ liệu này',
     'required_array_keys' => ':attribute phải chứa các mục cho: :values.',
     'required_if' => ':attribute là bắt buộc khi :other là :value.',
     'required_if_accepted' => ':attribute là bắt buộc khi :other được chấp nhận.',
