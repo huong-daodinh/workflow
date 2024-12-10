@@ -1,0 +1,1 @@
+import{_ as o}from"./TaskMessage.vue_vue_type_script_setup_true_lang-SSZKULHM.js";import"./app-UGKIrydJ.js";import"./icon-send-BN1G2lDK.js";import"./_plugin-vue_export-helper-DlAUqK2U.js";import"./icon-edit-SeQIhmDT.js";export{o as default};

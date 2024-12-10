@@ -99,7 +99,9 @@ class ChatController extends Controller
             ->whereHas('members', function (Builder $query) {
               $query->where('member_id', Auth::id());
           })->where('name', 'like', '%' . $name . '%')->get();
-
+        foreach( $chats as $chat ) {
+          $chat->has_room = true;
+        }
 
         $users = User::where('name', 'like', '%' . $name . '%')
                ->where('id', '!=', Auth::id())

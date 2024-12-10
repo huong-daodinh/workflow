@@ -1,0 +1,1 @@
+import{_ as e}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{e as o,f as r,E as n}from"./app-UGKIrydJ.js";const s={},c={class:"btn btn-gradient"};function a(t,_){return o(),r("button",c,[n(t.$slots,"default")])}const l=e(s,[["render",a]]);export{l as P};

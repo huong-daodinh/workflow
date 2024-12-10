@@ -42,11 +42,11 @@ const submit = () => {
               <div class="mb-16">
                 <h1
                   class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">
-                  Forgot Password
+                  Quên mật khẩu
                 </h1>
                 <p class="text-base font-bold leading-normal text-white-dark">
-                  Forgot your password? No problem. Just let us know your email address and we will
-                  email you a password reset link that will allow you to choose a new one.
+                  Quên mật khẩu? Không có gì đáng lo. Nhập email của bạn và bạn sẽ lấy lại được mật
+                  khẩu của mình.
                 </p>
               </div>
               <div v-if="status" class="mb-4 font-bold text-sm text-green-600">
@@ -71,7 +71,7 @@ const submit = () => {
                 <button
                   type="submit"
                   class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                  Submit
+                  Gửi
                 </button>
               </form>
               <div class="relative my-7 text-center md:mb-9">
@@ -87,7 +87,7 @@ const submit = () => {
                   v-if="$page.props.auth"
                   :href="route('login.view')"
                   class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                  Back to login
+                  Trở lại đăng nhập
                 </Link>
               </div>
             </div>

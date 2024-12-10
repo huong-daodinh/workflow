@@ -52,7 +52,7 @@ const submit = () => {
               <div class="mb-16">
                 <h1
                   class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">
-                  Reset Password
+                  Đặt lại mật khẩu
                 </h1>
               </div>
 
@@ -72,7 +72,7 @@ const submit = () => {
                   <input-error :message="form.errors.email" class="mt-2" />
                 </div>
                 <div>
-                  <label for="Password">Password</label>
+                  <label for="Password">Mật khẩu</label>
                   <div class="relative text-white-dark">
                     <input
                       id="Password"
@@ -87,7 +87,7 @@ const submit = () => {
                   <input-error :message="form.errors.password" class="mt-2" />
                 </div>
                 <div>
-                  <label for="Password">Confirm Password</label>
+                  <label for="Password">Xác nhận mật khẩu</label>
                   <div class="relative text-white-dark">
                     <input
                       id="Password"
@@ -106,7 +106,7 @@ const submit = () => {
                   <PrimaryButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing">
-                    Reset Password
+                    Đặt lại
                   </PrimaryButton>
                 </div>
               </form>

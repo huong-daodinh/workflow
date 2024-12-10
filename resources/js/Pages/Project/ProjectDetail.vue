@@ -8,6 +8,7 @@ import ProjectListView from '@/Components/project/ProjectListView.vue';
 import ProjectBoardView from '@/Components/project/ProjectBoardView.vue';
 import { useAppStore } from '@/stores';
 import ProjectAnalyze from '@/Components/project/ProjectAnalyze.vue';
+import FileIcon from '@/Components/FileIcon.vue';
 
 const appStore = useAppStore();
 const accordions1 = ref<Array<number>>([]);
@@ -37,6 +38,8 @@ const props = defineProps({
     required: true
   }
 });
+
+console.log('project', props.project);
 
 onBeforeMount(() => {
   if (props.project.task_lists.length > 0) {
@@ -135,13 +138,12 @@ const onUpdateSelectedTask = (taskId: number) => {
                           v-for="(attachment, index) in project.attachments"
                           :key="index"
                           class="mt-2">
-                          <Link
-                            method="get"
-                            as="button"
-                            :href="route('project-attachment.download', attachment.id)"
-                            class="text-primary italic underline hover:text-info">
+                          <a
+                            :href="route('project-attachment.download', { id: attachment.id })"
+                            class="text-sm italic block h-fit underline text-primary hover:font-bold">
+                            <file-icon :extension="attachment.slug.split('.').pop()" class="ml-1" />
                             {{ attachment.slug }}
-                          </Link>
+                          </a>
                         </div>
                       </div>
                     </div>

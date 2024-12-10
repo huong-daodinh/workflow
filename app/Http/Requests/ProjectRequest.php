@@ -26,7 +26,6 @@ class ProjectRequest extends FormRequest
             'description' => ['required', 'string'],
             'files' => ['nullable', 'array'],
             'files.*' => 'nullable',
-            'type' => 'required|string'
         ];
     }
 }

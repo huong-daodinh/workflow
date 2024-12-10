@@ -14,7 +14,7 @@
     </head>
     <!-- <body class="font-sans antialiased"> -->
 
-    <body class="main-section antialiased font-sans bg-[#fafafa]">
+    <body class="main-section antialiased font-sans bg-[#fafafa] text-sm font-normal">
         @inertia
         @if (env('APP_IS_DOCKER') == 'true')
           {{-- <script src="/socket.io/socket.io.js"></script> --}}

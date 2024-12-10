@@ -55,10 +55,10 @@ const submit = () => {
               <div class="mb-16">
                 <h1
                   class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">
-                  Sign in
+                  Đăng nhập
                 </h1>
                 <p class="text-base font-bold leading-normal text-white-dark">
-                  Enter your email and password to login
+                  Nhập email và mật khẩu để đăng nhập
                 </p>
               </div>
               <form class="space-y-5 dark:text-white" @submit.prevent="submit">
@@ -77,7 +77,7 @@ const submit = () => {
                   <input-error :message="form.errors.email" class="mt-2" />
                 </div>
                 <div>
-                  <label for="Password">Password</label>
+                  <label for="Password">Mật khẩu</label>
                   <div class="relative text-white-dark">
                     <input
                       id="Password"
@@ -96,28 +96,15 @@ const submit = () => {
                     v-if="canResetPassword"
                     :href="route('password.request')"
                     class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Forgot your password?
+                    Quên mật khẩu?
                   </Link>
                 </div>
                 <button
                   type="submit"
                   class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                  Sign in
+                  Đăng nhập
                 </button>
               </form>
-              <div class="relative my-7 text-center md:mb-9">
-                <span
-                  class="absolute inset-x-0 top-1/2 h-px w-full -translate-y-1/2 bg-white-light dark:bg-white-dark"></span>
-                <span
-                  class="relative bg-white px-2 font-bold uppercase text-white-dark dark:bg-dark dark:text-white-light">
-                  or
-                </span>
-              </div>
-              <Link
-                :href="route('register')"
-                class="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                Register new account
-              </Link>
             </div>
           </div>
         </div>

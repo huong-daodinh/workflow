@@ -56,6 +56,6 @@ class TagSeeder extends Seeder
       Tag::create([
         'slug'=> 'closed',
         'color'=> 'secondary',
-      ])
+      ]);
     }
 }

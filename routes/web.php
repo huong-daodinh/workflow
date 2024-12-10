@@ -13,6 +13,7 @@ use App\Http\Controllers\TaskListController;
 use App\Http\Controllers\TaskResultController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\App;
@@ -92,6 +93,8 @@ Route::middleware(['auth', 'online'])->group(function () {
     Route::resource('subtask', SubtaskController::class);
 
     Route::resource('task-list', TaskListController::class);
+
+    Route::resource('user', UserController::class);
 });
 
 

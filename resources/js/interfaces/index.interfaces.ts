@@ -16,7 +16,10 @@ export interface user {
   created_at: string;
   updated_at: string;
   phone: string;
+  password: string;
   role: string;
+  can_action?: boolean;
+  active: boolean;
 }
 
 export interface tag {
@@ -98,4 +101,9 @@ export interface task_message {
 export interface task_result {
   task: task;
   description: string;
+}
+
+export interface department {
+  id: number;
+  name: string;
 }
