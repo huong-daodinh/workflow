@@ -62,8 +62,8 @@
                               </button>
                             </li>
                             <li>
-                              <button @click="addTask(task_list.id)">
-                                <icon-plus /> {{ $t('create_new_task') }}
+                              <button @click="addEditTaskList(task_list)">
+                                {{ $t('update_task_list') }}
                               </button>
                             </li>
                             <li>

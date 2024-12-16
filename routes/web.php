@@ -78,7 +78,7 @@ Route::middleware(['auth', 'online'])->group(function () {
       Route::post('/user/{userId}/check_in', [TimesheetController::class, 'checkIn'])->name('timesheet.check_in');
       Route::post('/user/{timesheetId}/check_out', [TimesheetController::class, 'checkOut'])->name('timesheet.check_out');
       Route::get('/export/{userId}', [TimesheetController::class, 'export']);
-      Route::get('/index', [TimesheetController::class, ''])->name('timesheet.index')->name('timesheet.index');
+      Route::get('/index', [TimesheetController::class, 'index'])->name('timesheet.index');
     });
 
     Route::resource('department', DepartmentController::class);
